@@ -1,0 +1,41 @@
+@page "/edit-exam-template-answer"
+@attribute [Authorize]
+
+@inject Microsoft.Extensions.Localization.IStringLocalizer<EditExamTemplateAnswer> L
+<PageTitle>Edit ExamTemplateAnswer</PageTitle>
+
+    <RadzenColumn SizeMD=12>
+        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">Cannot save ExamTemplateAnswer</RadzenAlert>
+        <RadzenTemplateForm TItem="IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplateAnswer" Data="@(examTemplateAnswer)" Visible="@(examTemplateAnswer != null)" Submit="@FormSubmit">
+          <RadzenStack>
+            <RadzenFormField Text="Exam Template Question" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenDropDownDataGrid Data="@(examTemplateQuestionsForExamTemplateQuestionsId)" TextProperty="Question" ValueProperty="ExamTemplateQuestionsId" AllowClear=true
+                          style="display: block; width: 100%" @bind-Value="@(examTemplateAnswer.ExamTemplateQuestionsId)" Name="ExamTemplateQuestionsId"
+                        SelectedValue=@examTemplateQuestionsForExamTemplateQuestionsIdValue Count=@examTemplateQuestionsForExamTemplateQuestionsIdCount LoadData=@examTemplateQuestionsForExamTemplateQuestionsIdLoadData />
+              </ChildContent>
+            </RadzenFormField>
+            <RadzenFormField Text="Exam Template Answer1" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@(examTemplateAnswer.ExamTemplateAnswer1)" Name="ExamTemplateAnswer1" MaxLength="500" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="ExamTemplateAnswer1" Text="ExamTemplateAnswer1 is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Is Correct Answer" Component="IsCorrectAnswer" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenCheckBox @bind-Value="@(examTemplateAnswer.IsCorrectAnswer)" Name="IsCorrectAnswer" />
+                </RadzenColumn>
+            </RadzenRow>
+          </RadzenStack>
+          <RadzenStack style="margin-top:1rem;" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                    <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Save" Variant="Variant.Flat" />
+                    <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancel" Variant="Variant.Flat" Click="@CancelButtonClick"  />
+          </RadzenStack>
+        </RadzenTemplateForm>
+    </RadzenColumn>
+

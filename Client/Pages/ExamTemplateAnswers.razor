@@ -1,0 +1,50 @@
+@page "/exam-template-answers"
+
+@attribute [Authorize]
+@inject Microsoft.Extensions.Localization.IStringLocalizer<ExamTemplateAnswers> L
+
+<PageTitle>ExamTemplateAnswers</PageTitle>
+<RadzenStack>
+    <RadzenRow AlignItems="AlignItems.Center">
+        <RadzenColumn Size="12" SizeMD="6">
+            <RadzenText Text="Template Answers" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="6">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                <RadzenSplitButton Icon="get_app" Text="Export" Click="@ExportClick" Variant="Variant.Flat" Shade="Shade.Lighter">
+                    <RadzenSplitButtonItem Text="Excel" Value="xlsx" />
+                    <RadzenSplitButtonItem Text="CSV" Value="csv" />
+                </RadzenSplitButton>
+                <RadzenButton Icon="add_circle_outline" Text="Add" Click="@AddButtonClick" Variant="Variant.Flat" />
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenTextBox Placeholder="Search ..." style="display: block; width: 100%" @oninput="@Search" aria-label="Search by all string columns" />
+    <RadzenRow>
+      <RadzenColumn SizeMD=12>
+        <RadzenDataGrid @ref="grid0" ColumnWidth="200px"   AllowFiltering="true" FilterMode="FilterMode.Advanced" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
+            Data="@(examTemplateAnswers)" LoadData="@Grid0LoadData" Count="@count" TItem="IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplateAnswer" RowSelect="@EditRow">
+            <Columns>
+                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplateAnswer" Property="ExamTemplateAnswerId" Title="Exam Template Answer Id" Visible="false">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplateAnswer" Property="ExamTemplateQuestion.Question" Title="Exam Template Question" Visible="false">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplateAnswer" Property="ExamTemplateAnswer1" Title="Exam Template Answer1">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplateAnswer" Property="IsCorrectAnswer" Title="Is Correct Answer">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplateAnswer" Filterable="false" Sortable="false" Width="70px" TextAlign="TextAlign.Center">
+                    <Template Context="examTemplateAnswer">
+
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Medium"
+                            Shade="Shade.Lighter" Variant="Variant.Flat"
+                            Click=@(args => GridDeleteButtonClick(args, examTemplateAnswer)) @onclick:stopPropagation="true" />
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+
+        </RadzenDataGrid>
+
+    </RadzenColumn>
+  </RadzenRow>
+</RadzenStack>

@@ -1,0 +1,33 @@
+@page "/add-exam-template"
+@attribute [Authorize]
+
+@inject Microsoft.Extensions.Localization.IStringLocalizer<AddExamTemplate> L
+<PageTitle>Add ExamTemplate</PageTitle>
+    <RadzenColumn SizeMD=12>
+        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">Cannot save ExamTemplate</RadzenAlert>
+        <RadzenTemplateForm TItem="IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplate" Data="@(examTemplate)" Visible="@(examTemplate != null)" Submit="@FormSubmit">
+          <RadzenStack>
+            <RadzenFormField Text="Exam Template Title" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@(examTemplate.ExamTemplateTitle)" Name="ExamTemplateTitle" MaxLength="255" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="ExamTemplateTitle" Text="ExamTemplateTitle is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Active" Component="Active" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenCheckBox @bind-Value="@(examTemplate.Active)" Name="Active" />
+                </RadzenColumn>
+            </RadzenRow>
+          </RadzenStack>
+          <RadzenStack style="margin-top:1rem;" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                    <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Save" Variant="Variant.Flat" />
+                    <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancel" Variant="Variant.Flat" Click="@CancelButtonClick"  />
+          </RadzenStack>
+        </RadzenTemplateForm>
+    </RadzenColumn>
+

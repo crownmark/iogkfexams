@@ -1,0 +1,35 @@
+@page "/edit-rank"
+
+@attribute [Authorize]
+@inject Microsoft.Extensions.Localization.IStringLocalizer<EditRank> L
+
+<PageTitle>Edit Rank</PageTitle>
+
+    <RadzenColumn SizeMD=12>
+        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">Cannot save Rank</RadzenAlert>
+        <RadzenTemplateForm TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Rank" Data="@(rank)" Visible="@(rank != null)" Submit="@FormSubmit">
+          <RadzenStack>
+            <RadzenFormField Text="Rank Name" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@(rank.RankName)" Name="RankName" MaxLength="50" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="RankName" Text="RankName is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Active" Component="Active" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenCheckBox @bind-Value="@(rank.Active)" Name="Active" />
+                </RadzenColumn>
+            </RadzenRow>
+          </RadzenStack>
+          <RadzenStack style="margin-top:1rem;" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                    <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Save" Variant="Variant.Flat" />
+                    <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancel" Variant="Variant.Flat" Click="@CancelButtonClick"  />
+          </RadzenStack>
+        </RadzenTemplateForm>
+    </RadzenColumn>
+

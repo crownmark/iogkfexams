@@ -1,0 +1,25 @@
+@page "/add-exam-status"
+@attribute [Authorize]
+
+@inject Microsoft.Extensions.Localization.IStringLocalizer<AddExamStatus> L
+<PageTitle>Add ExamStatus</PageTitle>
+    <RadzenColumn SizeMD=12>
+        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">Cannot save ExamStatus</RadzenAlert>
+        <RadzenTemplateForm TItem="IOGKFExams.Server.Models.IOGKFExamsDb.ExamStatus" Data="@(examStatus)" Visible="@(examStatus != null)" Submit="@FormSubmit">
+          <RadzenStack>
+            <RadzenFormField Text="Title" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@(examStatus.Title)" Name="Title" MaxLength="50" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="Title" Text="Title is required" />
+                  </Helper>
+            </RadzenFormField>
+          </RadzenStack>
+          <RadzenStack style="margin-top:1rem;" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                    <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Save" Variant="Variant.Flat" />
+                    <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancel" Variant="Variant.Flat" Click="@CancelButtonClick"  />
+          </RadzenStack>
+        </RadzenTemplateForm>
+    </RadzenColumn>
+

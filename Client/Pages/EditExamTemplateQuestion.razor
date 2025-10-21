@@ -1,0 +1,58 @@
+@page "/edit-exam-template-question"
+
+@attribute [Authorize]
+@inject Microsoft.Extensions.Localization.IStringLocalizer<EditExamTemplateQuestion> L
+
+<PageTitle>Edit ExamTemplateQuestion</PageTitle>
+
+    <RadzenColumn SizeMD=12>
+        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">Cannot save ExamTemplateQuestion</RadzenAlert>
+        <RadzenTemplateForm TItem="IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplateQuestion" Data="@(examTemplateQuestion)" Visible="@(examTemplateQuestion != null)" Submit="@FormSubmit">
+          <RadzenStack>
+            <RadzenFormField Text="Exam Template" Variant="Variant.Outlined" Visible="false">
+                  <ChildContent>
+                    <RadzenDropDownDataGrid Data="@(examTemplatesForExamTemplateId)" TextProperty="ExamTemplateTitle" ValueProperty="ExamTemplateId" AllowClear=true
+                          style="display: block; width: 100%" @bind-Value="@(examTemplateQuestion.ExamTemplateId)" Name="ExamTemplateId"
+                        SelectedValue=@examTemplatesForExamTemplateIdValue Count=@examTemplatesForExamTemplateIdCount LoadData=@examTemplatesForExamTemplateIdLoadData />
+              </ChildContent>
+            </RadzenFormField>
+            <RadzenFormField Text="Language" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenDropDownDataGrid Data="@(languagesForLanguageId)" TextProperty="LanguageName" ValueProperty="LanguageId" AllowClear=true
+                          style="display: block; width: 100%" @bind-Value="@(examTemplateQuestion.LanguageId)" Name="LanguageId"
+                        SelectedValue=@languagesForLanguageIdValue Count=@languagesForLanguageIdCount LoadData=@languagesForLanguageIdLoadData />
+              </ChildContent>
+            </RadzenFormField>
+            <RadzenFormField Text="Question" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@(examTemplateQuestion.Question)" Name="Question" MaxLength="500" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="Question" Text="Question is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Rank" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenDropDownDataGrid Data="@(ranksForMinimumRankRequiredId)" TextProperty="RankName" ValueProperty="RankId" AllowClear=true
+                          style="display: block; width: 100%" @bind-Value="@(examTemplateQuestion.MinimumRankRequiredId)" Name="MinimumRankRequiredId"
+                        SelectedValue=@ranksForMinimumRankRequiredIdValue Count=@ranksForMinimumRankRequiredIdCount LoadData=@ranksForMinimumRankRequiredIdLoadData />
+              </ChildContent>
+            </RadzenFormField>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Active" Component="Active" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenCheckBox @bind-Value="@(examTemplateQuestion.Active)" Name="Active" />
+                </RadzenColumn>
+            </RadzenRow>
+          </RadzenStack>
+          <RadzenStack style="margin-top:1rem;" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                    <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Save" Variant="Variant.Flat" />
+                    <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancel" Variant="Variant.Flat" Click="@CancelButtonClick"  />
+          </RadzenStack>
+        </RadzenTemplateForm>
+    </RadzenColumn>
+<RadzenStack Style="margin-top: 5px">
+<ExamTemplateAnswers ExamTemplateQuestionId="@examTemplateQuestion.ExamTemplateQuestionsId"/>
+</RadzenStack>
