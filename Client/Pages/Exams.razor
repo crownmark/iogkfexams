@@ -27,8 +27,11 @@
             <Columns>
                 <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="ExamId" Title="Exam Id">
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="ExamGuid" Title="Exam Guid">
-                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="ExamSessionCode" Title="Session Code"></RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="Country.CountryName" Title="Country"></RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="StudentFirstName" Title="First Name"></RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="StudentLastName" Title="Last Name"></RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="Iogkfnumber" Title="IOGKF #"></RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="ExamStatus.Title" Title="Exam Status">
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="CreatedDate" Title="Created Date">
@@ -37,6 +40,8 @@
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="ExamGrade" Title="Exam Grade">
                 </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="ExamGuid" Title="Exam Guid" Visible="false">
+                                </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Filterable="false" Sortable="false" Width="70px" TextAlign="TextAlign.Center">
                     <Template Context="exam">
 

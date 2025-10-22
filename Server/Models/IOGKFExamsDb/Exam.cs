@@ -28,6 +28,22 @@ namespace IOGKFExams.Server.Models.IOGKFExamsDb
 
         public decimal? ExamGrade { get; set; }
 
+        public int? ExamSessionCode { get; set; }
+
+        [MaxLength(255)]
+        public string StudentFirstName { get; set; }
+
+        [MaxLength(255)]
+        public string StudentLastName { get; set; }
+
+        [Column("IOGKFNumber")]
+        [MaxLength(50)]
+        public string Iogkfnumber { get; set; }
+
+        public int? CountryId { get; set; }
+
+        public Country Country { get; set; }
+
         public ICollection<ExamQuestion> ExamQuestions { get; set; }
     }
 }

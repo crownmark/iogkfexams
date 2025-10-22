@@ -18,6 +18,21 @@
                       <RadzenDropDown TValue="int" ValueProperty="ExamTemplateId" TextProperty="ExamTemplateTitle" Data="@examTemplates" LoadData="@examTemplatesLoadData" Count="@examTemplatesCount" @bind-Value="@selectedTemplate"/>
               </ChildContent>
             </RadzenFormField>
+            <RadzenFormField Text="First Name" Variant="Variant.Outlined" Visible="true">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@exam.StudentFirstName" Name="StudentFirstName" />
+              </ChildContent>
+            </RadzenFormField>
+<RadzenFormField Text="Last Name" Variant="Variant.Outlined" Visible="true">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@exam.StudentLastName" Name="StudentLastName" />
+              </ChildContent>
+            </RadzenFormField>
+<RadzenFormField Text="Country" Variant="Variant.Outlined" Visible="true" Component="CountryId">
+                  <ChildContent>
+                      <RadzenDropDown TValue="int?" ValueProperty="CountryId" TextProperty="CountryName" @bind-Value="@exam.CountryId" Data="@countries" LoadData="@countriesLoadData" Count="@countriesCount" Name="CountryId"/>
+              </ChildContent>
+            </RadzenFormField>
             <RadzenFormField Text="Exam Status" Variant="Variant.Outlined" Visible="false">
                   <ChildContent>
                     <RadzenDropDownDataGrid Data="@(examStatusesForExamStatusId)" TextProperty="Title" ValueProperty="ExamStatusId" AllowClear=true

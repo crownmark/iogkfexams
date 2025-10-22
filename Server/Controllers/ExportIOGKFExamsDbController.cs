@@ -19,6 +19,20 @@ namespace IOGKFExams.Server.Controllers
             this.context = context;
         }
 
+        [HttpGet("/export/IOGKFExamsDb/countries/csv")]
+        [HttpGet("/export/IOGKFExamsDb/countries/csv(fileName='{fileName}')")]
+        public async Task<FileStreamResult> ExportCountriesToCSV(string fileName = null)
+        {
+            return ToCSV(ApplyQuery(await service.GetCountries(), Request.Query, false), fileName);
+        }
+
+        [HttpGet("/export/IOGKFExamsDb/countries/excel")]
+        [HttpGet("/export/IOGKFExamsDb/countries/excel(fileName='{fileName}')")]
+        public async Task<FileStreamResult> ExportCountriesToExcel(string fileName = null)
+        {
+            return ToExcel(ApplyQuery(await service.GetCountries(), Request.Query, false), fileName);
+        }
+
         [HttpGet("/export/IOGKFExamsDb/examanswers/csv")]
         [HttpGet("/export/IOGKFExamsDb/examanswers/csv(fileName='{fileName}')")]
         public async Task<FileStreamResult> ExportExamAnswersToCSV(string fileName = null)

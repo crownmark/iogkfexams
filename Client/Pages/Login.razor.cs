@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Radzen;
 using Radzen.Blazor;
+using IOGKFExams.Client;
 
 namespace IOGKFExams.Client.Pages
 {
@@ -29,6 +30,8 @@ namespace IOGKFExams.Client.Pages
 
         [Inject]
         protected NotificationService NotificationService { get; set; }
+
+        
 
         protected string redirectUrl;
         protected string error;

@@ -7,6 +7,7 @@ using IOGKFExams.Server.Data;
 using Microsoft.AspNetCore.Identity;
 using IOGKFExams.Server.Models;
 using Microsoft.AspNetCore.Components.Authorization;
+using IOGKFExams.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -19,6 +20,10 @@ builder.Services.AddRadzenCookieThemeService(options =>
     options.Duration = TimeSpan.FromDays(365);
 });
 builder.Services.AddHttpClient();
+builder.Services.AddHttpClient<BatchFunctionsService>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"] ?? "https://localhost:5001/");
+});
 builder.Services.AddScoped<IOGKFExams.Server.IOGKFExamsDbService>();
 builder.Services.AddDbContext<IOGKFExams.Server.Data.IOGKFExamsDbContext>(options =>
 {
@@ -27,6 +32,7 @@ builder.Services.AddDbContext<IOGKFExams.Server.Data.IOGKFExamsDbContext>(option
 builder.Services.AddControllers().AddOData(opt =>
 {
     var oDataBuilderIOGKFExamsDb = new ODataConventionModelBuilder();
+    oDataBuilderIOGKFExamsDb.EntitySet<IOGKFExams.Server.Models.IOGKFExamsDb.Country>("Countries");
     oDataBuilderIOGKFExamsDb.EntitySet<IOGKFExams.Server.Models.IOGKFExamsDb.ExamAnswer>("ExamAnswers");
     oDataBuilderIOGKFExamsDb.EntitySet<IOGKFExams.Server.Models.IOGKFExamsDb.ExamQuestion>("ExamQuestions");
     oDataBuilderIOGKFExamsDb.EntitySet<IOGKFExams.Server.Models.IOGKFExamsDb.Exam>("Exams");

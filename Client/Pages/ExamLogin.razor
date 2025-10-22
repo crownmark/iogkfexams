@@ -1,19 +1,17 @@
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Login> L
-@layout LoginLayout
-@page "/login"
+@layout ExamLoginLayout
+@page "/examlogin"
 
-<PageTitle>Login</PageTitle>
-<RadzenText Text="Exam Management Login" TextStyle="Radzen.Blazor.TextStyle.H5" class="mb-4" TagName="Radzen.Blazor.TagName.H2" />
+
+<PageTitle>Exam Login</PageTitle>
+<RadzenText Text="Exam Login" TextStyle="Radzen.Blazor.TextStyle.H5" class="mb-4" TagName="Radzen.Blazor.TagName.H2" />
 <RadzenRow>
     <RadzenColumn SizeMD="12">
-        <RadzenTemplateForm Action="@($"account/login?redirectUrl={redirectUrl}")" Data="@("login")"
+        <RadzenTemplateForm Data="@("login")"
             Method="post">
             <RadzenAlert Shade="Radzen.Shade.Lighter" Variant="Radzen.Variant.Flat" Size="Radzen.AlertSize.Small" AlertStyle="Radzen.AlertStyle.Danger" Visible="@errorVisible">@error</RadzenAlert>
             <RadzenAlert Shade="Radzen.Shade.Lighter" Variant="Radzen.Variant.Flat" Size="Radzen.AlertSize.Small" AlertStyle="Radzen.AlertStyle.Info" Visible="@infoVisible">@info</RadzenAlert>
-            <RadzenLogin AllowResetPassword="true" AllowRegister="true" FormFieldVariant="Variant.Outlined"
-                    ResetPassword="@ResetPassword"
-                    Register="@Register"
-            />
+            <RadzenLogin AllowResetPassword="false" AllowRegister="false" FormFieldVariant="Variant.Outlined" UserText="Exam ID" UserRequired="Exam ID is required" PasswordText="Exam Session Code" PasswordRequired="Exam Session Code is required" LoginText="Take Test" Login="@TakeExam"/>
         </RadzenTemplateForm>
     </RadzenColumn>
 </RadzenRow>

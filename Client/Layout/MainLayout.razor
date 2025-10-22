@@ -11,7 +11,6 @@
             </RadzenColumn>
             <RadzenColumn Size="7">
                 <RadzenStack AlignItems="AlignItems.Center" Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="0.5rem" class="rz-px-2">
-                    <CulturePicker />
                     <RadzenAppearanceToggle />
                     <RadzenProfileMenu Visible="@Security.IsAuthenticated()" Click="@ProfileMenuClick">
                         <ChildContent>
@@ -45,6 +44,7 @@
             <RadzenPanelMenuItem Text="Home" Path="" />
             <RadzenPanelMenuItem Path="exams" Text="Exams" Icon="quiz"></RadzenPanelMenuItem>
             <RadzenPanelMenuItem Text="Admin" Icon="shield_person" Expanded="false">
+                <RadzenPanelMenuItem Path="countries" Text="Countries" Icon="flag"></RadzenPanelMenuItem>
                 <RadzenPanelMenuItem Path="exam-statuses" Text="Exam Statuses" Icon="lists"></RadzenPanelMenuItem>
                 <RadzenPanelMenuItem Path="exam-templates" Text="Exam Templates" Icon="quiz"></RadzenPanelMenuItem>
                 <RadzenPanelMenuItem Path="languages" Text="Languages" Icon="language"></RadzenPanelMenuItem>

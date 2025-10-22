@@ -10,7 +10,7 @@ using Radzen.Blazor;
 
 namespace IOGKFExams.Client.Pages
 {
-    public partial class Exams
+    public partial class Countries
     {
         [Inject]
         protected IJSRuntime JSRuntime { get; set; }
@@ -33,9 +33,9 @@ namespace IOGKFExams.Client.Pages
         [Inject]
         public IOGKFExamsDbService IOGKFExamsDbService { get; set; }
 
-        protected IEnumerable<IOGKFExams.Server.Models.IOGKFExamsDb.Exam> exams;
+        protected IEnumerable<IOGKFExams.Server.Models.IOGKFExamsDb.Country> countries;
 
-        protected RadzenDataGrid<IOGKFExams.Server.Models.IOGKFExamsDb.Exam> grid0;
+        protected RadzenDataGrid<IOGKFExams.Server.Models.IOGKFExamsDb.Country> grid0;
         protected int count;
 
         protected string search = "";
@@ -56,35 +56,35 @@ namespace IOGKFExams.Client.Pages
         {
             try
             {
-                var result = await IOGKFExamsDbService.GetExams(filter: $@"{(string.IsNullOrEmpty(args.Filter)? "true" : args.Filter)}", expand: "ExamStatus,Country", orderby: $"{args.OrderBy}", top: args.Top, skip: args.Skip, count:args.Top != null && args.Skip != null);
-                exams = result.Value.AsODataEnumerable();
+                var result = await IOGKFExamsDbService.GetCountries(filter: $@"(contains(CountryName,""{search}"")) and {(string.IsNullOrEmpty(args.Filter)? "true" : args.Filter)}", orderby: $"{args.OrderBy}", top: args.Top, skip: args.Skip, count:args.Top != null && args.Skip != null);
+                countries = result.Value.AsODataEnumerable();
                 count = result.Count;
             }
             catch (System.Exception ex)
             {
-                NotificationService.Notify(new NotificationMessage(){ Severity = NotificationSeverity.Error, Summary = $"Error", Detail = $"Unable to load Exams" });
+                NotificationService.Notify(new NotificationMessage(){ Severity = NotificationSeverity.Error, Summary = $"Error", Detail = $"Unable to load Countries" });
             }
         }
 
         protected async Task AddButtonClick(MouseEventArgs args)
         {
-            await DialogService.OpenAsync<AddExam>("Add Exam", null);
+            await DialogService.OpenAsync<AddCountry>("Add Country", null);
             await grid0.Reload();
         }
 
-        protected async Task EditRow(IOGKFExams.Server.Models.IOGKFExamsDb.Exam args)
+        protected async Task EditRow(IOGKFExams.Server.Models.IOGKFExamsDb.Country args)
         {
-            await DialogService.OpenAsync<EditExam>("Edit Exam", new Dictionary<string, object> { {"ExamId", args.ExamId} });
+            await DialogService.OpenAsync<EditCountry>("Edit Country", new Dictionary<string, object> { {"CountryId", args.CountryId} });
             await grid0.Reload();
         }
 
-        protected async Task GridDeleteButtonClick(MouseEventArgs args, IOGKFExams.Server.Models.IOGKFExamsDb.Exam exam)
+        protected async Task GridDeleteButtonClick(MouseEventArgs args, IOGKFExams.Server.Models.IOGKFExamsDb.Country country)
         {
             try
             {
                 if (await DialogService.Confirm("Are you sure you want to delete this record?") == true)
                 {
-                    var deleteResult = await IOGKFExamsDbService.DeleteExam(examId:exam.ExamId);
+                    var deleteResult = await IOGKFExamsDbService.DeleteCountry(countryId:country.CountryId);
 
                     if (deleteResult != null)
                     {
@@ -98,7 +98,7 @@ namespace IOGKFExams.Client.Pages
                 {
                     Severity = NotificationSeverity.Error,
                     Summary = $"Error",
-                    Detail = $"Unable to delete Exam"
+                    Detail = $"Unable to delete Country"
                 });
             }
         }
@@ -107,24 +107,24 @@ namespace IOGKFExams.Client.Pages
         {
             if (args?.Value == "csv")
             {
-                await IOGKFExamsDbService.ExportExamsToCSV(new Query
+                await IOGKFExamsDbService.ExportCountriesToCSV(new Query
                 {
                     Filter = $@"{(string.IsNullOrEmpty(grid0.Query.Filter)? "true" : grid0.Query.Filter)}",
                     OrderBy = $"{grid0.Query.OrderBy}",
-                    Expand = "ExamStatus",
+                    Expand = "",
                     Select = string.Join(",", grid0.ColumnsCollection.Where(c => c.GetVisible() && !string.IsNullOrEmpty(c.Property)).Select(c => c.Property.Contains(".") ? c.Property + " as " + c.Property.Replace(".", "") : c.Property))
-                }, "Exams");
+                }, "Countries");
             }
 
             if (args == null || args.Value == "xlsx")
             {
-                await IOGKFExamsDbService.ExportExamsToExcel(new Query
+                await IOGKFExamsDbService.ExportCountriesToExcel(new Query
                 {
                     Filter = $@"{(string.IsNullOrEmpty(grid0.Query.Filter)? "true" : grid0.Query.Filter)}",
                     OrderBy = $"{grid0.Query.OrderBy}",
-                    Expand = "ExamStatus",
+                    Expand = "",
                     Select = string.Join(",", grid0.ColumnsCollection.Where(c => c.GetVisible() && !string.IsNullOrEmpty(c.Property)).Select(c => c.Property.Contains(".") ? c.Property + " as " + c.Property.Replace(".", "") : c.Property))
-                }, "Exams");
+                }, "Countries");
             }
         }
     }

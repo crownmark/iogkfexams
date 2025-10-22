@@ -7,6 +7,7 @@ using IOGKFExams.Server.Models.IOGKFExamsDb;
 using Microsoft.EntityFrameworkCore;
 using Radzen;
 using System.Text;
+using System.Security.Cryptography;
 
 namespace IOGKFExams.Server.Controllers
 {
@@ -26,6 +27,21 @@ namespace IOGKFExams.Server.Controllers
             if (request != null)
             {
                 this.baseUrl = $"{request.Scheme}://{request.Host}{request.PathBase}";
+            }
+        }
+        public static int GenerateExamSessionCode(int examId)
+        {
+            // Combine examId with a precise UTC timestamp for uniqueness
+            string input = $"{examId}_{DateTime.UtcNow:yyyyMMddHHmmssfff}";
+
+            using (var sha256 = SHA256.Create())
+            {
+                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(input));
+                int hashValue = BitConverter.ToInt32(hashBytes, 0);
+                int positiveHash = Math.Abs(hashValue);
+
+                // Ensure result is always a 6-digit number between 100000–999999
+                return 100000 + (positiveHash % 900000);
             }
         }
 

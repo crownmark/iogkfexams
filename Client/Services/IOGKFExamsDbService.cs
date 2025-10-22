@@ -31,6 +31,100 @@ namespace IOGKFExams.Client
         }
 
 
+        public async System.Threading.Tasks.Task ExportCountriesToExcel(Query query = null, string fileName = null)
+        {
+            navigationManager.NavigateTo(query != null ? query.ToUrl($"export/iogkfexamsdb/countries/excel(fileName='{(!string.IsNullOrEmpty(fileName) ? UrlEncoder.Default.Encode(fileName) : "Export")}')") : $"export/iogkfexamsdb/countries/excel(fileName='{(!string.IsNullOrEmpty(fileName) ? UrlEncoder.Default.Encode(fileName) : "Export")}')", true);
+        }
+
+        public async System.Threading.Tasks.Task ExportCountriesToCSV(Query query = null, string fileName = null)
+        {
+            navigationManager.NavigateTo(query != null ? query.ToUrl($"export/iogkfexamsdb/countries/csv(fileName='{(!string.IsNullOrEmpty(fileName) ? UrlEncoder.Default.Encode(fileName) : "Export")}')") : $"export/iogkfexamsdb/countries/csv(fileName='{(!string.IsNullOrEmpty(fileName) ? UrlEncoder.Default.Encode(fileName) : "Export")}')", true);
+        }
+
+        partial void OnGetCountries(HttpRequestMessage requestMessage);
+
+        public async Task<Radzen.ODataServiceResult<IOGKFExams.Server.Models.IOGKFExamsDb.Country>> GetCountries(Query query)
+        {
+            return await GetCountries(filter:$"{query.Filter}", orderby:$"{query.OrderBy}", top:query.Top, skip:query.Skip, count:query.Top != null && query.Skip != null);
+        }
+
+        public async Task<Radzen.ODataServiceResult<IOGKFExams.Server.Models.IOGKFExamsDb.Country>> GetCountries(string filter = default(string), string orderby = default(string), string expand = default(string), int? top = default(int?), int? skip = default(int?), bool? count = default(bool?), string format = default(string), string select = default(string), string apply = default(string))
+        {
+            var uri = new Uri(baseUri, $"Countries");
+            uri = Radzen.ODataExtensions.GetODataUri(uri: uri, filter:filter, top:top, skip:skip, orderby:orderby, expand:expand, select:select, count:count, apply:apply);
+
+            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
+
+            OnGetCountries(httpRequestMessage);
+
+            var response = await httpClient.SendAsync(httpRequestMessage);
+
+            return await Radzen.HttpResponseMessageExtensions.ReadAsync<Radzen.ODataServiceResult<IOGKFExams.Server.Models.IOGKFExamsDb.Country>>(response);
+        }
+
+        partial void OnCreateCountry(HttpRequestMessage requestMessage);
+
+        public async Task<IOGKFExams.Server.Models.IOGKFExamsDb.Country> CreateCountry(IOGKFExams.Server.Models.IOGKFExamsDb.Country country = default(IOGKFExams.Server.Models.IOGKFExamsDb.Country))
+        {
+            var uri = new Uri(baseUri, $"Countries");
+
+            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, uri);
+
+            httpRequestMessage.Content = new StringContent(Radzen.ODataJsonSerializer.Serialize(country), Encoding.UTF8, "application/json");
+
+            OnCreateCountry(httpRequestMessage);
+
+            var response = await httpClient.SendAsync(httpRequestMessage);
+
+            return await Radzen.HttpResponseMessageExtensions.ReadAsync<IOGKFExams.Server.Models.IOGKFExamsDb.Country>(response);
+        }
+
+        partial void OnDeleteCountry(HttpRequestMessage requestMessage);
+
+        public async Task<HttpResponseMessage> DeleteCountry(int countryId = default(int))
+        {
+            var uri = new Uri(baseUri, $"Countries({countryId})");
+
+            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, uri);
+
+            OnDeleteCountry(httpRequestMessage);
+
+            return await httpClient.SendAsync(httpRequestMessage);
+        }
+
+        partial void OnGetCountryByCountryId(HttpRequestMessage requestMessage);
+
+        public async Task<IOGKFExams.Server.Models.IOGKFExamsDb.Country> GetCountryByCountryId(string expand = default(string), int countryId = default(int))
+        {
+            var uri = new Uri(baseUri, $"Countries({countryId})");
+
+            uri = Radzen.ODataExtensions.GetODataUri(uri: uri, filter:null, top:null, skip:null, orderby:null, expand:expand, select:null, count:null);
+
+            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
+
+            OnGetCountryByCountryId(httpRequestMessage);
+
+            var response = await httpClient.SendAsync(httpRequestMessage);
+
+            return await Radzen.HttpResponseMessageExtensions.ReadAsync<IOGKFExams.Server.Models.IOGKFExamsDb.Country>(response);
+        }
+
+        partial void OnUpdateCountry(HttpRequestMessage requestMessage);
+        
+        public async Task<HttpResponseMessage> UpdateCountry(int countryId = default(int), IOGKFExams.Server.Models.IOGKFExamsDb.Country country = default(IOGKFExams.Server.Models.IOGKFExamsDb.Country))
+        {
+            var uri = new Uri(baseUri, $"Countries({countryId})");
+
+            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Patch, uri);
+
+
+            httpRequestMessage.Content = new StringContent(Radzen.ODataJsonSerializer.Serialize(country), Encoding.UTF8, "application/json");
+
+            OnUpdateCountry(httpRequestMessage);
+
+            return await httpClient.SendAsync(httpRequestMessage);
+        }
+
         public async System.Threading.Tasks.Task ExportExamAnswersToExcel(Query query = null, string fileName = null)
         {
             navigationManager.NavigateTo(query != null ? query.ToUrl($"export/iogkfexamsdb/examanswers/excel(fileName='{(!string.IsNullOrEmpty(fileName) ? UrlEncoder.Default.Encode(fileName) : "Export")}')") : $"export/iogkfexamsdb/examanswers/excel(fileName='{(!string.IsNullOrEmpty(fileName) ? UrlEncoder.Default.Encode(fileName) : "Export")}')", true);

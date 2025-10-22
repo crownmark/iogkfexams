@@ -17,12 +17,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace IOGKFExams.Server.Controllers.IOGKFExamsDb
 {
-    [Route("odata/IOGKFExamsDb/Exams")]
-    public partial class ExamsController : ODataController
+    [Route("odata/IOGKFExamsDb/Countries")]
+    public partial class CountriesController : ODataController
     {
         private IOGKFExams.Server.Data.IOGKFExamsDbContext context;
 
-        public ExamsController(IOGKFExams.Server.Data.IOGKFExamsDbContext context)
+        public CountriesController(IOGKFExams.Server.Data.IOGKFExamsDbContext context)
         {
             this.context = context;
         }
@@ -30,34 +30,34 @@ namespace IOGKFExams.Server.Controllers.IOGKFExamsDb
     
         [HttpGet]
         [EnableQuery(MaxExpansionDepth=10,MaxAnyAllExpressionDepth=10,MaxNodeCount=1000)]
-        public IEnumerable<IOGKFExams.Server.Models.IOGKFExamsDb.Exam> GetExams()
+        public IEnumerable<IOGKFExams.Server.Models.IOGKFExamsDb.Country> GetCountries()
         {
-            var items = this.context.Exams.AsQueryable<IOGKFExams.Server.Models.IOGKFExamsDb.Exam>();
-            this.OnExamsRead(ref items);
+            var items = this.context.Countries.AsQueryable<IOGKFExams.Server.Models.IOGKFExamsDb.Country>();
+            this.OnCountriesRead(ref items);
 
             return items;
         }
 
-        partial void OnExamsRead(ref IQueryable<IOGKFExams.Server.Models.IOGKFExamsDb.Exam> items);
+        partial void OnCountriesRead(ref IQueryable<IOGKFExams.Server.Models.IOGKFExamsDb.Country> items);
 
-        partial void OnExamGet(ref SingleResult<IOGKFExams.Server.Models.IOGKFExamsDb.Exam> item);
+        partial void OnCountryGet(ref SingleResult<IOGKFExams.Server.Models.IOGKFExamsDb.Country> item);
 
         [EnableQuery(MaxExpansionDepth=10,MaxAnyAllExpressionDepth=10,MaxNodeCount=1000)]
-        [HttpGet("/odata/IOGKFExamsDb/Exams(ExamId={ExamId})")]
-        public SingleResult<IOGKFExams.Server.Models.IOGKFExamsDb.Exam> GetExam(int key)
+        [HttpGet("/odata/IOGKFExamsDb/Countries(CountryId={CountryId})")]
+        public SingleResult<IOGKFExams.Server.Models.IOGKFExamsDb.Country> GetCountry(int key)
         {
-            var items = this.context.Exams.Where(i => i.ExamId == key);
+            var items = this.context.Countries.Where(i => i.CountryId == key);
             var result = SingleResult.Create(items);
 
-            OnExamGet(ref result);
+            OnCountryGet(ref result);
 
             return result;
         }
-        partial void OnExamDeleted(IOGKFExams.Server.Models.IOGKFExamsDb.Exam item);
-        partial void OnAfterExamDeleted(IOGKFExams.Server.Models.IOGKFExamsDb.Exam item);
+        partial void OnCountryDeleted(IOGKFExams.Server.Models.IOGKFExamsDb.Country item);
+        partial void OnAfterCountryDeleted(IOGKFExams.Server.Models.IOGKFExamsDb.Country item);
 
-        [HttpDelete("/odata/IOGKFExamsDb/Exams(ExamId={ExamId})")]
-        public IActionResult DeleteExam(int key)
+        [HttpDelete("/odata/IOGKFExamsDb/Countries(CountryId={CountryId})")]
+        public IActionResult DeleteCountry(int key)
         {
             try
             {
@@ -67,18 +67,18 @@ namespace IOGKFExams.Server.Controllers.IOGKFExamsDb
                 }
 
 
-                var item = this.context.Exams
-                    .Where(i => i.ExamId == key)
+                var item = this.context.Countries
+                    .Where(i => i.CountryId == key)
                     .FirstOrDefault();
 
                 if (item == null)
                 {
                     return BadRequest();
                 }
-                this.OnExamDeleted(item);
-                this.context.Exams.Remove(item);
+                this.OnCountryDeleted(item);
+                this.context.Countries.Remove(item);
                 this.context.SaveChanges();
-                this.OnAfterExamDeleted(item);
+                this.OnAfterCountryDeleted(item);
 
                 return new NoContentResult();
 
@@ -90,12 +90,12 @@ namespace IOGKFExams.Server.Controllers.IOGKFExamsDb
             }
         }
 
-        partial void OnExamUpdated(IOGKFExams.Server.Models.IOGKFExamsDb.Exam item);
-        partial void OnAfterExamUpdated(IOGKFExams.Server.Models.IOGKFExamsDb.Exam item);
+        partial void OnCountryUpdated(IOGKFExams.Server.Models.IOGKFExamsDb.Country item);
+        partial void OnAfterCountryUpdated(IOGKFExams.Server.Models.IOGKFExamsDb.Country item);
 
-        [HttpPut("/odata/IOGKFExamsDb/Exams(ExamId={ExamId})")]
+        [HttpPut("/odata/IOGKFExamsDb/Countries(CountryId={CountryId})")]
         [EnableQuery(MaxExpansionDepth=10,MaxAnyAllExpressionDepth=10,MaxNodeCount=1000)]
-        public IActionResult PutExam(int key, [FromBody]IOGKFExams.Server.Models.IOGKFExamsDb.Exam item)
+        public IActionResult PutCountry(int key, [FromBody]IOGKFExams.Server.Models.IOGKFExamsDb.Country item)
         {
             try
             {
@@ -104,17 +104,17 @@ namespace IOGKFExams.Server.Controllers.IOGKFExamsDb
                     return BadRequest(ModelState);
                 }
 
-                if (item == null || (item.ExamId != key))
+                if (item == null || (item.CountryId != key))
                 {
                     return BadRequest();
                 }
-                this.OnExamUpdated(item);
-                this.context.Exams.Update(item);
+                this.OnCountryUpdated(item);
+                this.context.Countries.Update(item);
                 this.context.SaveChanges();
 
-                var itemToReturn = this.context.Exams.Where(i => i.ExamId == key);
-                Request.QueryString = Request.QueryString.Add("$expand", "Country,ExamStatus");
-                this.OnAfterExamUpdated(item);
+                var itemToReturn = this.context.Countries.Where(i => i.CountryId == key);
+                
+                this.OnAfterCountryUpdated(item);
                 return new ObjectResult(SingleResult.Create(itemToReturn));
             }
             catch(Exception ex)
@@ -124,9 +124,9 @@ namespace IOGKFExams.Server.Controllers.IOGKFExamsDb
             }
         }
 
-        [HttpPatch("/odata/IOGKFExamsDb/Exams(ExamId={ExamId})")]
+        [HttpPatch("/odata/IOGKFExamsDb/Countries(CountryId={CountryId})")]
         [EnableQuery(MaxExpansionDepth=10,MaxAnyAllExpressionDepth=10,MaxNodeCount=1000)]
-        public IActionResult PatchExam(int key, [FromBody]Delta<IOGKFExams.Server.Models.IOGKFExamsDb.Exam> patch)
+        public IActionResult PatchCountry(int key, [FromBody]Delta<IOGKFExams.Server.Models.IOGKFExamsDb.Country> patch)
         {
             try
             {
@@ -135,7 +135,7 @@ namespace IOGKFExams.Server.Controllers.IOGKFExamsDb
                     return BadRequest(ModelState);
                 }
 
-                var item = this.context.Exams.Where(i => i.ExamId == key).FirstOrDefault();
+                var item = this.context.Countries.Where(i => i.CountryId == key).FirstOrDefault();
 
                 if (item == null)
                 {
@@ -143,13 +143,13 @@ namespace IOGKFExams.Server.Controllers.IOGKFExamsDb
                 }
                 patch.Patch(item);
 
-                this.OnExamUpdated(item);
-                this.context.Exams.Update(item);
+                this.OnCountryUpdated(item);
+                this.context.Countries.Update(item);
                 this.context.SaveChanges();
 
-                var itemToReturn = this.context.Exams.Where(i => i.ExamId == key);
-                Request.QueryString = Request.QueryString.Add("$expand", "Country,ExamStatus");
-                this.OnAfterExamUpdated(item);
+                var itemToReturn = this.context.Countries.Where(i => i.CountryId == key);
+                
+                this.OnAfterCountryUpdated(item);
                 return new ObjectResult(SingleResult.Create(itemToReturn));
             }
             catch(Exception ex)
@@ -159,12 +159,12 @@ namespace IOGKFExams.Server.Controllers.IOGKFExamsDb
             }
         }
 
-        partial void OnExamCreated(IOGKFExams.Server.Models.IOGKFExamsDb.Exam item);
-        partial void OnAfterExamCreated(IOGKFExams.Server.Models.IOGKFExamsDb.Exam item);
+        partial void OnCountryCreated(IOGKFExams.Server.Models.IOGKFExamsDb.Country item);
+        partial void OnAfterCountryCreated(IOGKFExams.Server.Models.IOGKFExamsDb.Country item);
 
         [HttpPost]
         [EnableQuery(MaxExpansionDepth=10,MaxAnyAllExpressionDepth=10,MaxNodeCount=1000)]
-        public IActionResult Post([FromBody] IOGKFExams.Server.Models.IOGKFExamsDb.Exam item)
+        public IActionResult Post([FromBody] IOGKFExams.Server.Models.IOGKFExamsDb.Country item)
         {
             try
             {
@@ -178,15 +178,15 @@ namespace IOGKFExams.Server.Controllers.IOGKFExamsDb
                     return BadRequest();
                 }
 
-                this.OnExamCreated(item);
-                this.context.Exams.Add(item);
+                this.OnCountryCreated(item);
+                this.context.Countries.Add(item);
                 this.context.SaveChanges();
 
-                var itemToReturn = this.context.Exams.Where(i => i.ExamId == item.ExamId);
+                var itemToReturn = this.context.Countries.Where(i => i.CountryId == item.CountryId);
 
-                Request.QueryString = Request.QueryString.Add("$expand", "Country,ExamStatus");
+                
 
-                this.OnAfterExamCreated(item);
+                this.OnAfterCountryCreated(item);
 
                 return new ObjectResult(SingleResult.Create(itemToReturn))
                 {

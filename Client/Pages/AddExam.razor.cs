@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Radzen;
 using Radzen.Blazor;
-using IOGKFExams.Client.Services;
 
 namespace IOGKFExams.Client.Pages
 {
@@ -79,6 +78,10 @@ namespace IOGKFExams.Client.Pages
         protected int selectedTemplate;
         protected IEnumerable<IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplate> examTemplates;
 
+        protected IEnumerable<IOGKFExams.Server.Models.IOGKFExamsDb.Country> countries;
+
+        protected int countriesCount;
+
         protected async Task examTemplatesLoadData(LoadDataArgs args)
         {
             try
@@ -104,6 +107,9 @@ namespace IOGKFExams.Client.Pages
                 exam.ExamStatusId = 1;
                 exam.ExamGuid = Guid.NewGuid().ToString();
                 var newExam = await IOGKFExamsDbService.CreateExam(exam);
+                newExam.ExamSessionCode = BatchFunctionsService.GenerateExamSessionCode(newExam.ExamId);
+                await IOGKFExamsDbService.UpdateExam(newExam.ExamId, newExam);
+
                 var template = await IOGKFExamsDbService.GetExamTemplateByExamTemplateId("ExamTemplateQuestions($expand=ExamTemplateAnswers)", selectedTemplate);
                 var response = await BatchFunctionsService.CreateSingleExam(template.ExamTemplateId, newExam.ExamId);
                 if (response.IsSuccessStatusCode)
@@ -126,6 +132,22 @@ namespace IOGKFExams.Client.Pages
         protected async Task CancelButtonClick(MouseEventArgs args)
         {
             DialogService.Close(null);
+        }
+
+
+        protected async Task countriesLoadData(LoadDataArgs args)
+        {
+            try
+            {
+                var result = await IOGKFExamsDbService.GetCountries(new Query { Top = args.Top, Skip = args.Skip, Filter = args.Filter, OrderBy = args.OrderBy });
+
+                countries = result.Value.AsODataEnumerable();
+                countriesCount = result.Count;
+            }
+            catch (Exception)
+            {
+                NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Error, Summary = "Error", Detail = "Unable to load" });
+            }
         }
     }
 }

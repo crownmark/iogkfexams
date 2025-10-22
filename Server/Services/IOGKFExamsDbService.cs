@@ -69,6 +69,168 @@ namespace IOGKFExams.Server
         }
 
 
+        public async Task ExportCountriesToExcel(Query query = null, string fileName = null)
+        {
+            navigationManager.NavigateTo(query != null ? query.ToUrl($"export/iogkfexamsdb/countries/excel(fileName='{(!string.IsNullOrEmpty(fileName) ? UrlEncoder.Default.Encode(fileName) : "Export")}')") : $"export/iogkfexamsdb/countries/excel(fileName='{(!string.IsNullOrEmpty(fileName) ? UrlEncoder.Default.Encode(fileName) : "Export")}')", true);
+        }
+
+        public async Task ExportCountriesToCSV(Query query = null, string fileName = null)
+        {
+            navigationManager.NavigateTo(query != null ? query.ToUrl($"export/iogkfexamsdb/countries/csv(fileName='{(!string.IsNullOrEmpty(fileName) ? UrlEncoder.Default.Encode(fileName) : "Export")}')") : $"export/iogkfexamsdb/countries/csv(fileName='{(!string.IsNullOrEmpty(fileName) ? UrlEncoder.Default.Encode(fileName) : "Export")}')", true);
+        }
+
+        partial void OnCountriesRead(ref IQueryable<IOGKFExams.Server.Models.IOGKFExamsDb.Country> items);
+
+        public async Task<IQueryable<IOGKFExams.Server.Models.IOGKFExamsDb.Country>> GetCountries(Query query = null)
+        {
+            var items = Context.Countries.AsQueryable();
+
+
+            if (query != null)
+            {
+                if (!string.IsNullOrEmpty(query.Expand))
+                {
+                    var propertiesToExpand = query.Expand.Split(',');
+                    foreach(var p in propertiesToExpand)
+                    {
+                        items = items.Include(p.Trim());
+                    }
+                }
+
+                ApplyQuery(ref items, query);
+            }
+
+            OnCountriesRead(ref items);
+
+            return await Task.FromResult(items);
+        }
+
+        partial void OnCountryGet(IOGKFExams.Server.Models.IOGKFExamsDb.Country item);
+        partial void OnGetCountryByCountryId(ref IQueryable<IOGKFExams.Server.Models.IOGKFExamsDb.Country> items);
+
+
+        public async Task<IOGKFExams.Server.Models.IOGKFExamsDb.Country> GetCountryByCountryId(int countryid)
+        {
+            var items = Context.Countries
+                              .AsNoTracking()
+                              .Where(i => i.CountryId == countryid);
+
+ 
+            OnGetCountryByCountryId(ref items);
+
+            var itemToReturn = items.FirstOrDefault();
+
+            OnCountryGet(itemToReturn);
+
+            return await Task.FromResult(itemToReturn);
+        }
+
+        partial void OnCountryCreated(IOGKFExams.Server.Models.IOGKFExamsDb.Country item);
+        partial void OnAfterCountryCreated(IOGKFExams.Server.Models.IOGKFExamsDb.Country item);
+
+        public async Task<IOGKFExams.Server.Models.IOGKFExamsDb.Country> CreateCountry(IOGKFExams.Server.Models.IOGKFExamsDb.Country country)
+        {
+            OnCountryCreated(country);
+
+            var existingItem = Context.Countries
+                              .Where(i => i.CountryId == country.CountryId)
+                              .FirstOrDefault();
+
+            if (existingItem != null)
+            {
+               throw new Exception("Item already available");
+            }            
+
+            try
+            {
+                Context.Countries.Add(country);
+                Context.SaveChanges();
+            }
+            catch
+            {
+                Context.Entry(country).State = EntityState.Detached;
+                throw;
+            }
+
+            OnAfterCountryCreated(country);
+
+            return country;
+        }
+
+        public async Task<IOGKFExams.Server.Models.IOGKFExamsDb.Country> CancelCountryChanges(IOGKFExams.Server.Models.IOGKFExamsDb.Country item)
+        {
+            var entityToCancel = Context.Entry(item);
+            if (entityToCancel.State == EntityState.Modified)
+            {
+              entityToCancel.CurrentValues.SetValues(entityToCancel.OriginalValues);
+              entityToCancel.State = EntityState.Unchanged;
+            }
+
+            return item;
+        }
+
+        partial void OnCountryUpdated(IOGKFExams.Server.Models.IOGKFExamsDb.Country item);
+        partial void OnAfterCountryUpdated(IOGKFExams.Server.Models.IOGKFExamsDb.Country item);
+
+        public async Task<IOGKFExams.Server.Models.IOGKFExamsDb.Country> UpdateCountry(int countryid, IOGKFExams.Server.Models.IOGKFExamsDb.Country country)
+        {
+            OnCountryUpdated(country);
+
+            var itemToUpdate = Context.Countries
+                              .Where(i => i.CountryId == country.CountryId)
+                              .FirstOrDefault();
+
+            if (itemToUpdate == null)
+            {
+               throw new Exception("Item no longer available");
+            }
+                
+            var entryToUpdate = Context.Entry(itemToUpdate);
+            entryToUpdate.CurrentValues.SetValues(country);
+            entryToUpdate.State = EntityState.Modified;
+
+            Context.SaveChanges();
+
+            OnAfterCountryUpdated(country);
+
+            return country;
+        }
+
+        partial void OnCountryDeleted(IOGKFExams.Server.Models.IOGKFExamsDb.Country item);
+        partial void OnAfterCountryDeleted(IOGKFExams.Server.Models.IOGKFExamsDb.Country item);
+
+        public async Task<IOGKFExams.Server.Models.IOGKFExamsDb.Country> DeleteCountry(int countryid)
+        {
+            var itemToDelete = Context.Countries
+                              .Where(i => i.CountryId == countryid)
+                              .Include(i => i.Exams)
+                              .FirstOrDefault();
+
+            if (itemToDelete == null)
+            {
+               throw new Exception("Item no longer available");
+            }
+
+            OnCountryDeleted(itemToDelete);
+
+
+            Context.Countries.Remove(itemToDelete);
+
+            try
+            {
+                Context.SaveChanges();
+            }
+            catch
+            {
+                Context.Entry(itemToDelete).State = EntityState.Unchanged;
+                throw;
+            }
+
+            OnAfterCountryDeleted(itemToDelete);
+
+            return itemToDelete;
+        }
+    
         public async Task ExportExamAnswersToExcel(Query query = null, string fileName = null)
         {
             navigationManager.NavigateTo(query != null ? query.ToUrl($"export/iogkfexamsdb/examanswers/excel(fileName='{(!string.IsNullOrEmpty(fileName) ? UrlEncoder.Default.Encode(fileName) : "Export")}')") : $"export/iogkfexamsdb/examanswers/excel(fileName='{(!string.IsNullOrEmpty(fileName) ? UrlEncoder.Default.Encode(fileName) : "Export")}')", true);
@@ -416,6 +578,7 @@ namespace IOGKFExams.Server
         {
             var items = Context.Exams.AsQueryable();
 
+            items = items.Include(i => i.Country);
             items = items.Include(i => i.ExamStatus);
 
             if (query != null)
@@ -447,6 +610,7 @@ namespace IOGKFExams.Server
                               .AsNoTracking()
                               .Where(i => i.ExamId == examid);
 
+            items = items.Include(i => i.Country);
             items = items.Include(i => i.ExamStatus);
  
             OnGetExamByExamId(ref items);

@@ -47,6 +47,12 @@ namespace IOGKFExams.Server.Data
               .HasPrincipalKey(i => i.RankId);
 
             builder.Entity<IOGKFExams.Server.Models.IOGKFExamsDb.Exam>()
+              .HasOne(i => i.Country)
+              .WithMany(i => i.Exams)
+              .HasForeignKey(i => i.CountryId)
+              .HasPrincipalKey(i => i.CountryId);
+
+            builder.Entity<IOGKFExams.Server.Models.IOGKFExamsDb.Exam>()
               .HasOne(i => i.ExamStatus)
               .WithMany(i => i.Exams)
               .HasForeignKey(i => i.ExamStatusId)
@@ -109,6 +115,8 @@ namespace IOGKFExams.Server.Data
               .HasColumnType("datetime");
             this.OnModelBuilding(builder);
         }
+
+        public DbSet<IOGKFExams.Server.Models.IOGKFExamsDb.Country> Countries { get; set; }
 
         public DbSet<IOGKFExams.Server.Models.IOGKFExamsDb.ExamAnswer> ExamAnswers { get; set; }
 

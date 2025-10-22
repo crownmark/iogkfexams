@@ -1,0 +1,32 @@
+@layout ExamLayout
+@inject Microsoft.Extensions.Localization.IStringLocalizer<TakeExam> L
+
+
+@page "/take-exam/{ExamGUID}"
+
+
+<PageTitle>TakeExam</PageTitle>
+<RadzenStack AlignItems="Radzen.AlignItems.Center">
+    <RadzenStack Orientation="Radzen.Orientation.Vertical">
+        <RadzenText Text="@($"{exam.StudentFirstName} {exam.StudentLastName}")" TextStyle="Radzen.Blazor.TextStyle.Subtitle1" />
+    </RadzenStack>
+
+    @foreach (var item in @exam.ExamQuestions)
+    {
+        <RadzenLabel Text="@item.Question" Style="font-weight: bold" />
+        <RadzenStack Gap="5">
+            @foreach (var answer in item.ExamAnswers)
+            {
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="Radzen.AlignItems.Center">
+                    <RadzenCheckBox TValue="bool" @bind-Value="@answer.IsSelectedAnswer" Change="@((args) => AnswerCheckBoxChange(args, answer))" />
+                    <RadzenLabel Text="@answer.ExamAnswer1" />
+                </RadzenStack>
+            }
+                @* <RadzenRadioButtonList TValue="bool" ValueProperty="IsSelectedAnswer" TextProperty="ExamAnswer1" Data="@item.ExamAnswers" Orientation="Radzen.Orientation.Vertical" /> 
+             *@
+        </RadzenStack>
+    }
+</RadzenStack>
+<RadzenStack>
+
+</RadzenStack>
