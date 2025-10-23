@@ -3,6 +3,7 @@ using System.IO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
+using IOGKFExams.Server.Models;
 
 namespace IOGKFExams.Server.Controllers
 {
@@ -83,6 +84,54 @@ namespace IOGKFExams.Server.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
+        }
+
+        // Single file upload
+        [HttpPost("upload/attachment")]
+        public IActionResult Attachment(IFormFile file)
+        {
+            try
+            {
+                var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+
+                using (var stream = new FileStream(Path.Combine(environment.WebRootPath, $"Attachments\\{fileName}"), FileMode.Create))
+                {
+                    // Save the file
+                    file.CopyTo(stream);
+
+                    // Return the URL of the file
+                    var url = Url.Content($"~/Attachments/{fileName}");
+
+                    return Ok(new AttachmentUploadResult() { FilePath = url, MimeType = file.ContentType });
+                    //return Ok(new { Url = url });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpDelete("upload/DeleteFile/{fileName}")]
+        public async Task<IActionResult> DeleteFile(string fileName)
+        {
+            var uploadsFolder = Path.Combine($"{environment.WebRootPath}\\attachments\\");
+            var fullPath = Path.Combine(uploadsFolder, fileName);
+
+            // 1. Delete the file from disk if it exists
+            if (System.IO.File.Exists(fullPath))
+            {
+                try
+                {
+                    System.IO.File.Delete(fullPath);
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, $"Failed to delete file from disk: {ex.Message}");
+                }
+            }
+
+            return Ok("File deleted.");
         }
     }
 }

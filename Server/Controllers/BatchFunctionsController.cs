@@ -64,6 +64,7 @@ namespace IOGKFExams.Server.Controllers
                             LanguageId = question.LanguageId,
                             MinimumRankRequiredId = question.MinimumRankRequiredId,
                             Question = question.Question,
+                            QuestionImageUrl = question.QuestionImageUrl,
                         });
                         await context.SaveChangesAsync();
                         var answers = await context.ExamTemplateAnswers.Where(x => x.ExamTemplateQuestionsId == question.ExamTemplateQuestionsId).ToListAsync();

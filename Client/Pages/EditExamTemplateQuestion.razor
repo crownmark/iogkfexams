@@ -31,6 +31,18 @@
                     <RadzenRequiredValidator Component="Question" Text="Question is required" />
                   </Helper>
             </RadzenFormField>
+            <RadzenFormField Text="Vital Point Image" Variant="Variant.Outlined">
+                <ChildContent>
+                    <RadzenUpload Name="QuestionImageUrl" ChooseText="Choose Image or Drag & Drop Here" Url="upload/attachment" Progress="@QuestionImageUrlProgress" Complete="@QuestionImageUrlComplete"></RadzenUpload>
+                    <RadzenProgressBar Visible="@showUploadProgress" Value="@uploadProgress" Max="100" Min="0" Unit="%"></RadzenProgressBar>
+                    <RadzenStack Orientation="Radzen.Orientation.Horizontal" AlignItems="Radzen.AlignItems.Center" Visible="@(!string.IsNullOrEmpty(examTemplateQuestion.QuestionImageUrl))">
+                        <RadzenButton ButtonStyle="Radzen.ButtonStyle.Danger" Icon="delete" Click="@DeleteFileButtonClick"></RadzenButton>
+                        <RadzenLabel Text="@examTemplateQuestion.QuestionImageUrl" />
+                    </RadzenStack>
+                </ChildContent>
+                <Helper>
+                </Helper>
+            </RadzenFormField>
             <RadzenFormField Text="Rank" Variant="Variant.Outlined">
                   <ChildContent>
                     <RadzenDropDownDataGrid Data="@(ranksForMinimumRankRequiredId)" TextProperty="RankName" ValueProperty="RankId" AllowClear=true

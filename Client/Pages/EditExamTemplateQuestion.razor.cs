@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Radzen;
 using Radzen.Blazor;
+using IOGKFExams.Server.Models;
+using System.Text.Json;
 
 namespace IOGKFExams.Client.Pages
 {
@@ -51,6 +53,8 @@ namespace IOGKFExams.Client.Pages
 
         protected int examTemplatesForExamTemplateIdCount;
         protected IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplate examTemplatesForExamTemplateIdValue;
+        protected int uploadProgress { get; set; }
+        protected bool showUploadProgress { get; set; }
         protected async Task examTemplatesForExamTemplateIdLoadData(LoadDataArgs args)
         {
             try
@@ -148,6 +152,77 @@ namespace IOGKFExams.Client.Pages
         protected async Task CancelButtonClick(MouseEventArgs args)
         {
             DialogService.Close(null);
+        }
+
+        protected async System.Threading.Tasks.Task DeleteFileButtonClick(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
+        {
+            try
+            {
+                var Http = new HttpClient();
+                var response = await Http.DeleteAsync($"{NavigationManager.BaseUri}upload/DeleteFile/{Path.GetFileName(examTemplateQuestion.QuestionImageUrl)}");
+                if (response.IsSuccessStatusCode)
+                {
+                    examTemplateQuestion.QuestionImageUrl = null;
+                    NotificationService.Notify(new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Success,
+                        Summary = "Deleted",
+                        Detail = "The file was successfully deleted."
+                    });
+                }
+                else
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    NotificationService.Notify(new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Error",
+                        Detail = error
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Exception",
+                    Detail = ex.Message
+                });
+            }
+        }
+
+        protected async System.Threading.Tasks.Task QuestionImageUrlProgress(Radzen.UploadProgressArgs args)
+        {
+            uploadProgress = args.Progress;
+            if (args.Progress == 100)
+            {
+                showUploadProgress = false;
+            }
+            else
+            {
+                showUploadProgress = true;
+            }
+        }
+
+        protected async System.Threading.Tasks.Task QuestionImageUrlComplete(Radzen.UploadCompleteEventArgs args)
+        {
+            if (!string.IsNullOrEmpty(args.RawResponse))
+            {
+                try
+                {
+                    var result = JsonSerializer.Deserialize<AttachmentUploadResult>(args.RawResponse, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+                    examTemplateQuestion.QuestionImageUrl = result?.FilePath;
+
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
         }
     }
 }

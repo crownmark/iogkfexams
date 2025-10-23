@@ -1,0 +1,38 @@
+@inject Microsoft.Extensions.Localization.IStringLocalizer<ExamResults> L
+@layout ExamLayout
+@page "/exam-results/{ExamGUID}"
+
+
+<PageTitle>IOGKF Exam Results</PageTitle>
+<RadzenStack Visible="(exam != null)">
+
+<RadzenStack AlignItems="Radzen.AlignItems.Center">
+    <RadzenStack>
+    <RadzenImage Path="images/IOGKFLogo.png"></RadzenImage>
+
+    </RadzenStack>
+</RadzenStack>
+<RadzenStack AlignItems="Radzen.AlignItems.Center">
+    <RadzenStack>
+    <RadzenText Text="Exam Results" TextStyle="Radzen.Blazor.TextStyle.H2" />
+    </RadzenStack>
+</RadzenStack>
+<RadzenStack AlignItems="Radzen.AlignItems.Center" JustifyContent="Radzen.JustifyContent.Center">
+    <RadzenStack AlignItems="Radzen.AlignItems.Center">
+            <RadzenText Text="@($"Exam ID: {exam.ExamId} - {exam.CompletedDate.Value.ToLocalTime().Date.ToString("MM/dd/yyyy")}")" TextStyle="Radzen.Blazor.TextStyle.H5" />
+            <RadzenText Text="@($"{exam.StudentFirstName}  {exam.StudentLastName}")" TextStyle="Radzen.Blazor.TextStyle.H5" />
+    </RadzenStack>
+</RadzenStack>
+<RadzenStack AlignItems="Radzen.AlignItems.Center">
+    <RadzenStack>
+    <RadzenText Text="@($"{(int)exam.ExamGrade}%")" TextStyle="Radzen.Blazor.TextStyle.DisplayH1" Style="font-weight: bolder" />
+    </RadzenStack>
+        <RadzenBadge Visible="@(exam.ExamGrade >= 70)" Text="PASS" IsPill="true" Style="font-size: 24px; line-height: 32px; width: 100px" Variant="Radzen.Variant.Filled" Shade="Radzen.Shade.Lighter" BadgeStyle="Radzen.BadgeStyle.Success"></RadzenBadge>
+        <RadzenBadge Visible="@(exam.ExamGrade < 70)"  Text="FAIL" IsPill="true" Style="font-size: 24px; line-height: 32px; width: 100px" Variant="Radzen.Variant.Filled" Shade="Radzen.Shade.Lighter" BadgeStyle="Radzen.BadgeStyle.Danger"></RadzenBadge>
+</RadzenStack>
+<RadzenStack AlignItems="Radzen.AlignItems.Center">
+    <RadzenStack>
+    <RadzenText Text="Your exam has been completed." TextStyle="Radzen.Blazor.TextStyle.Body1" />
+    </RadzenStack>
+</RadzenStack>
+</RadzenStack>

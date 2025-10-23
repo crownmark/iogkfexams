@@ -108,11 +108,11 @@ namespace IOGKFExams.Server.Data
 
             builder.Entity<IOGKFExams.Server.Models.IOGKFExamsDb.Exam>()
               .Property(p => p.CreatedDate)
-              .HasColumnType("datetime");
+              .HasColumnType("datetimeoffset");
 
             builder.Entity<IOGKFExams.Server.Models.IOGKFExamsDb.Exam>()
               .Property(p => p.CompletedDate)
-              .HasColumnType("datetime");
+              .HasColumnType("datetimeoffset");
             this.OnModelBuilding(builder);
         }
 

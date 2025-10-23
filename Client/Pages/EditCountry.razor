@@ -1,6 +1,7 @@
 @page "/edit-country"
 @attribute [Authorize]
 
+@inject Microsoft.Extensions.Localization.IStringLocalizer<EditCountry> L
 <PageTitle>Edit Country</PageTitle>
 
     <RadzenColumn SizeMD=12>

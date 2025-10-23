@@ -58,12 +58,18 @@ namespace IOGKFExams.Client.Pages
         {
             try
             {
+                gridLoading = true;
+
                 var result = await IOGKFExamsDbService.GetExamTemplateAnswers(filter: $@"(contains(ExamTemplateAnswer1,""{search}"")) and {(string.IsNullOrEmpty(args.Filter)? "true" : args.Filter)} and ExamTemplateQuestionsId eq {ExamTemplateQuestionId}", expand: "ExamTemplateQuestion", orderby: $"{args.OrderBy}", top: args.Top, skip: args.Skip, count:args.Top != null && args.Skip != null);
                 examTemplateAnswers = result.Value.AsODataEnumerable();
                 count = result.Count;
+                gridLoading = false;
+
             }
             catch (System.Exception ex)
             {
+                gridLoading = false;
+
                 NotificationService.Notify(new NotificationMessage(){ Severity = NotificationSeverity.Error, Summary = $"Error", Detail = $"Unable to load ExamTemplateAnswers {ex.Message}" });
             }
         }
@@ -128,6 +134,23 @@ namespace IOGKFExams.Client.Pages
                     Select = string.Join(",", grid0.ColumnsCollection.Where(c => c.GetVisible() && !string.IsNullOrEmpty(c.Property)).Select(c => c.Property.Contains(".") ? c.Property + " as " + c.Property.Replace(".", "") : c.Property))
                 }, "ExamTemplateAnswers");
             }
+        }
+
+        protected bool gridLoading { get; set; }
+
+        protected async System.Threading.Tasks.Task RefreshGridButtonClick(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
+        {
+            await grid0.Reload();
+        }
+
+        protected async System.Threading.Tasks.Task RefreshGridButtonMouseEnter(Microsoft.AspNetCore.Components.ElementReference args)
+        {
+            TooltipService.Open(args, "Refresh Data", new TooltipOptions { Position = TooltipPosition.Top });
+        }
+
+        protected async System.Threading.Tasks.Task RefreshGridButtonMouseLeave(Microsoft.AspNetCore.Components.ElementReference args)
+        {
+            TooltipService.Close();
         }
     }
 }

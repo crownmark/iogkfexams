@@ -10,10 +10,14 @@
             Method="post">
             <RadzenAlert Shade="Radzen.Shade.Lighter" Variant="Radzen.Variant.Flat" Size="Radzen.AlertSize.Small" AlertStyle="Radzen.AlertStyle.Danger" Visible="@errorVisible">@error</RadzenAlert>
             <RadzenAlert Shade="Radzen.Shade.Lighter" Variant="Radzen.Variant.Flat" Size="Radzen.AlertSize.Small" AlertStyle="Radzen.AlertStyle.Info" Visible="@infoVisible">@info</RadzenAlert>
-            <RadzenLogin AllowResetPassword="true" AllowRegister="true" FormFieldVariant="Variant.Outlined"
+            <RadzenLogin AllowResetPassword="true" AllowRegister="false" FormFieldVariant="Variant.Outlined"
                     ResetPassword="@ResetPassword"
-                    Register="@Register"
+                    Register="@Register" AllowRememberMe="true"
             />
+            <RadzenStack Orientation="Radzen.Orientation.Vertical" Style="margin-top: 10px">
+            <RadzenButton Text="Take Exam" Icon="passkey" Style="width: 100%" ButtonStyle="Radzen.ButtonStyle.Secondary" Click="@TakeExamButtonClick" />
+
+            </RadzenStack>
         </RadzenTemplateForm>
     </RadzenColumn>
 </RadzenRow>

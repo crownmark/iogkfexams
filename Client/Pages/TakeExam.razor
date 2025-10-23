@@ -5,28 +5,48 @@
 @page "/take-exam/{ExamGUID}"
 
 
-<PageTitle>TakeExam</PageTitle>
+<PageTitle>IOGKF Exam</PageTitle>
+<RadzenFab Text="Submit Exam" Click="@SubmitExamClick" Style="position:fixed;" Visible="@(allowSave)"></RadzenFab>
 <RadzenStack AlignItems="Radzen.AlignItems.Center">
-    <RadzenStack Orientation="Radzen.Orientation.Vertical">
-        <RadzenText Text="@($"{exam.StudentFirstName} {exam.StudentLastName}")" TextStyle="Radzen.Blazor.TextStyle.Subtitle1" />
+<RadzenStack AlignItems="Radzen.AlignItems.Stretch" Style="max-width: 800px">
+    <header style="background-color: var(--rz-primary-darker); text-align: center; padding: 20px">
+    <RadzenStack Orientation="Radzen.Orientation.Horizontal" AlignItems="Radzen.AlignItems.Center" JustifyContent="Radzen.JustifyContent.Center" Wrap="Radzen.FlexWrap.Wrap">
+        <RadzenImage Path="images/IOGKFLogo.png"></RadzenImage>
+
+    <RadzenText Text="IOGKF - Black Belt Exam" TextStyle="Radzen.Blazor.TextStyle.H2" Style="margin-bottom: 0px; color: var(--rz-white)" />
     </RadzenStack>
-
-    @foreach (var item in @exam.ExamQuestions)
-    {
-        <RadzenLabel Text="@item.Question" Style="font-weight: bold" />
-        <RadzenStack Gap="5">
-            @foreach (var answer in item.ExamAnswers)
-            {
-                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="Radzen.AlignItems.Center">
-                    <RadzenCheckBox TValue="bool" @bind-Value="@answer.IsSelectedAnswer" Change="@((args) => AnswerCheckBoxChange(args, answer))" />
-                    <RadzenLabel Text="@answer.ExamAnswer1" />
-                </RadzenStack>
-            }
-                @* <RadzenRadioButtonList TValue="bool" ValueProperty="IsSelectedAnswer" TextProperty="ExamAnswer1" Data="@item.ExamAnswers" Orientation="Radzen.Orientation.Vertical" /> 
-             *@
+        
+    </header>
+    <RadzenCard Variant="Radzen.Variant.Filled">
+        <RadzenStack AlignItems="Radzen.AlignItems.Center" Style="margin-bottom: 20px">
+            <RadzenText Text="@($"{exam.StudentFirstName} {exam.StudentLastName}" )" TextStyle="Radzen.Blazor.TextStyle.H3" />
         </RadzenStack>
-    }
-</RadzenStack>
-<RadzenStack>
+        <RadzenStack Gap="3">
+            @foreach (var item in @exam.ExamQuestions)
+            {
+                <div style="border-bottom: 1px solid #e5e7eb;margin-bottom: 30px;padding-bottom: 20px;">
+                    <RadzenText Text="@item.Question" TextStyle="Radzen.Blazor.TextStyle.H5"  />
+                    <RadzenStack AlignItems="Radzen.AlignItems.Center" JustifyContent="Radzen.JustifyContent.Center">
+                        <RadzenImage Path="@(item.QuestionImageUrl)" Visible="@(!string.IsNullOrEmpty(item.QuestionImageUrl))" Style="width: 300px"/>
 
+                    </RadzenStack>
+                    <RadzenText Text="Choose one answer:" TextStyle="Radzen.Blazor.TextStyle.Body1"  />
+                    <RadzenStack Gap="5">
+                        @foreach (var answer in item.ExamAnswers)
+                        {
+                            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="Radzen.AlignItems.Center" Style="display: block; background-color: #f8fafc;border: 1px solid #e2e8f0;padding: 10px 15px;border-radius: 8px;margin-bottom: 8px;transition: all 0.2s ease;">
+                                <RadzenCheckBox TValue="bool" @bind-Value="@answer.IsSelectedAnswer" Change="@((args) => AnswerCheckBoxChange(args, answer, item.ExamAnswers))" />
+                                <RadzenLabel Text="@answer.ExamAnswer1" />
+                            </RadzenStack>
+                        }
+                            @* <RadzenRadioButtonList TValue="bool" ValueProperty="IsSelectedAnswer" TextProperty="ExamAnswer1" Data="@item.ExamAnswers" Orientation="Radzen.Orientation.Vertical" /> 
+                        *@
+                    </RadzenStack>
+                </div>
+            }
+        </RadzenStack>
+    </RadzenCard>
 </RadzenStack>
+</RadzenStack>
+
+

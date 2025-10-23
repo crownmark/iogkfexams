@@ -22,9 +22,9 @@ namespace IOGKFExams.Server.Models.IOGKFExamsDb
 
         public ExamStatus ExamStatus { get; set; }
 
-        public DateTime? CreatedDate { get; set; }
+        public DateTimeOffset? CreatedDate { get; set; }
 
-        public DateTime? CompletedDate { get; set; }
+        public DateTimeOffset? CompletedDate { get; set; }
 
         public decimal? ExamGrade { get; set; }
 

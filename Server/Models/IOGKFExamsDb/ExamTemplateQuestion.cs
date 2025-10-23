@@ -35,6 +35,9 @@ namespace IOGKFExams.Server.Models.IOGKFExamsDb
 
         public Rank Rank { get; set; }
 
+        [MaxLength(255)]
+        public string QuestionImageUrl { get; set; }
+
         public ICollection<ExamTemplateAnswer> ExamTemplateAnswers { get; set; }
     }
 }

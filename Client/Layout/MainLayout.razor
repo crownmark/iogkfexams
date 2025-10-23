@@ -11,6 +11,7 @@
             </RadzenColumn>
             <RadzenColumn Size="7">
                 <RadzenStack AlignItems="AlignItems.Center" Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="0.5rem" class="rz-px-2">
+                    <CulturePicker />
                     <RadzenAppearanceToggle />
                     <RadzenProfileMenu Visible="@Security.IsAuthenticated()" Click="@ProfileMenuClick">
                         <ChildContent>
@@ -41,7 +42,7 @@
             <RadzenText Text="IOGKF Exams" TextStyle="Radzen.Blazor.TextStyle.Subtitle1" class="rz-mb-0" style="color: var(--rz-sidebar-color);" />
         </RadzenStack>
         <RadzenPanelMenu>
-            <RadzenPanelMenuItem Text="Home" Path="" />
+            <RadzenPanelMenuItem Text="Home" Path="" Icon="home" />
             <RadzenPanelMenuItem Path="exams" Text="Exams" Icon="quiz"></RadzenPanelMenuItem>
             <RadzenPanelMenuItem Text="Admin" Icon="shield_person" Expanded="false">
                 <RadzenPanelMenuItem Path="countries" Text="Countries" Icon="flag"></RadzenPanelMenuItem>

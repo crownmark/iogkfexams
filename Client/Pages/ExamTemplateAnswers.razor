@@ -22,7 +22,7 @@
     <RadzenTextBox Placeholder="Search ..." style="display: block; width: 100%" @oninput="@Search" aria-label="Search by all string columns" />
     <RadzenRow>
       <RadzenColumn SizeMD=12>
-        <RadzenDataGrid @ref="grid0" ColumnWidth="200px"   AllowFiltering="true" FilterMode="FilterMode.Advanced" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
+            <RadzenDataGrid @ref="grid0" ColumnWidth="200px" IsLoading="@gridLoading" AllowFiltering="true" FilterMode="FilterMode.Advanced" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
             Data="@(examTemplateAnswers)" LoadData="@Grid0LoadData" Count="@count" TItem="IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplateAnswer" RowSelect="@EditRow">
             <Columns>
                 <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplateAnswer" Property="ExamTemplateAnswerId" Title="Exam Template Answer Id" Visible="false">
@@ -42,7 +42,11 @@
                     </Template>
                 </RadzenDataGridColumn>
             </Columns>
-
+                <HeaderTemplate>
+                    <RadzenStack AlignItems="Radzen.AlignItems.Start">
+                        <RadzenButton Icon="refresh" Style="width: 36px" Click="@RefreshGridButtonClick" ButtonStyle="Radzen.ButtonStyle.Secondary" MouseEnter="@RefreshGridButtonMouseEnter" MouseLeave="@RefreshGridButtonMouseLeave"></RadzenButton>
+                    </RadzenStack>
+                </HeaderTemplate>
         </RadzenDataGrid>
 
     </RadzenColumn>

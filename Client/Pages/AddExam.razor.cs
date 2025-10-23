@@ -103,7 +103,7 @@ namespace IOGKFExams.Client.Pages
         {
             try
             {
-                exam.CreatedDate = DateTime.UtcNow;
+                exam.CreatedDate = DateTimeOffset.UtcNow;
                 exam.ExamStatusId = 1;
                 exam.ExamGuid = Guid.NewGuid().ToString();
                 var newExam = await IOGKFExamsDbService.CreateExam(exam);

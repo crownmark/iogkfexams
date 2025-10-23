@@ -80,5 +80,10 @@ namespace IOGKFExams.Client.Pages
                 info = "Password reset successfully. Please check your email for further instructions.";
             }
         }
+
+        protected async System.Threading.Tasks.Task TakeExamButtonClick(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
+        {
+            NavigationManager.NavigateTo($"/examlogin");
+        }
     }
 }
