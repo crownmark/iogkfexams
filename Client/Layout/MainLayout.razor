@@ -6,10 +6,10 @@
 <RadzenLayout>
     <RadzenHeader>
         <RadzenRow JustifyContent="JustifyContent.Start" AlignItems="AlignItems.Center" Gap="0">
-            <RadzenColumn Size="5">
+            <RadzenColumn Size="2">
                 <RadzenSidebarToggle Click="@SidebarToggleClick"></RadzenSidebarToggle>
             </RadzenColumn>
-            <RadzenColumn Size="7">
+            <RadzenColumn Size="10">
                 <RadzenStack AlignItems="AlignItems.Center" Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="0.5rem" class="rz-px-2">
                     <CulturePicker />
                     <RadzenAppearanceToggle />
@@ -30,7 +30,7 @@
         </RadzenRow>
     </RadzenHeader>
     <RadzenBody Expanded="@sidebarExpanded">
-        <RadzenRow class="rz-mx-auto rz-px-4 rz-pt-2 rz-pt-md-4 rz-pt-lg-6 rz-pt-xl-12 rz-pb-2 rz-pb-lg-12" Style="max-width: 1440px;">
+        <RadzenRow class="rz-mx-auto rz-px-4 rz-pt-2 rz-pt-md-4 rz-pt-lg-6 rz-pt-xl-12 rz-pb-2 rz-pb-lg-12" Style="max-width: 100%;">
             <RadzenColumn Size="12">
             @Body
             </RadzenColumn>
@@ -42,14 +42,14 @@
             <RadzenText Text="IOGKF Exams" TextStyle="Radzen.Blazor.TextStyle.Subtitle1" class="rz-mb-0" style="color: var(--rz-sidebar-color);" />
         </RadzenStack>
         <RadzenPanelMenu>
-            <RadzenPanelMenuItem Text="Home" Path="" Icon="home" />
-            <RadzenPanelMenuItem Path="exams" Text="Exams" Icon="quiz"></RadzenPanelMenuItem>
-            <RadzenPanelMenuItem Text="Admin" Icon="shield_person" Expanded="false">
-                <RadzenPanelMenuItem Path="countries" Text="Countries" Icon="flag"></RadzenPanelMenuItem>
-                <RadzenPanelMenuItem Path="exam-statuses" Text="Exam Statuses" Icon="lists"></RadzenPanelMenuItem>
-                <RadzenPanelMenuItem Path="exam-templates" Text="Exam Templates" Icon="quiz"></RadzenPanelMenuItem>
-                <RadzenPanelMenuItem Path="languages" Text="Languages" Icon="language"></RadzenPanelMenuItem>
-                <RadzenPanelMenuItem Path="ranks" Text="Ranks" Icon="editor_choice"></RadzenPanelMenuItem>
+            <RadzenPanelMenuItem Text="Home" Path="" Icon="home" Click="@PanelMenuItemClick" />
+            <RadzenPanelMenuItem Path="exams" Text="Exams" Icon="quiz" Click="@PanelMenuItemClick"></RadzenPanelMenuItem>
+            <RadzenPanelMenuItem Text="Admin" Icon="shield_person" Expanded="true" >
+                <RadzenPanelMenuItem Path="countries" Text="Countries" Icon="flag" Click="@PanelMenuItemClick"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Path="exam-statuses" Text="Exam Statuses" Icon="lists" Click="@PanelMenuItemClick"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Path="exam-templates" Text="Exam Templates" Icon="quiz" Click="@PanelMenuItemClick"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Path="languages" Text="Languages" Icon="language" Click="@PanelMenuItemClick"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Path="ranks" Text="Ranks" Icon="editor_choice" Click="@PanelMenuItemClick"></RadzenPanelMenuItem>
             </RadzenPanelMenuItem>
         </RadzenPanelMenu>
         <RadzenStack AlignItems="Radzen.AlignItems.Center" Gap="0" class="rz-py-4 rz-py-lg-6" Style="padding: var(--rz-panel-menu-item-padding);">

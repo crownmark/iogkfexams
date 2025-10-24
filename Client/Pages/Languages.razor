@@ -23,7 +23,7 @@
     <RadzenRow>
       <RadzenColumn SizeMD=12>
             <RadzenDataGrid @ref="grid0" ColumnWidth="200px" IsLoading="@gridLoading" AllowFiltering="true" FilterMode="FilterMode.Advanced" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
-            Data="@(languages)" LoadData="@Grid0LoadData" Count="@count" TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Language" RowSelect="@EditRow">
+            Data="@(languages)" LoadData="@Grid0LoadData" Count="@count" TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Language" RowSelect="@EditRow" Responsive="true">
             <Columns>
                 <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Language" Property="LanguageId" Title="Language Id">
                 </RadzenDataGridColumn>

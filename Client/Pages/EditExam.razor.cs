@@ -91,5 +91,26 @@ namespace IOGKFExams.Client.Pages
         {
             DialogService.Close(null);
         }
+
+        protected IEnumerable<IOGKFExams.Server.Models.IOGKFExamsDb.Country> countries;
+
+        protected int countriesCount;
+        protected async Task countriesLoadData(LoadDataArgs args)
+        {
+            try
+            {
+                var result = await IOGKFExamsDbService.GetCountries(new Query { Top = args.Top, Skip = args.Skip, Filter = args.Filter, OrderBy = args.OrderBy });
+
+                countries = result.Value.AsODataEnumerable();
+                countriesCount = result.Count;
+            }
+            catch (Exception)
+            {
+                NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Error, Summary = "Error", Detail = "Unable to load" });
+            }
+        }
+        protected async System.Threading.Tasks.Task ValidatePhone(System.String args)
+        {
+        }
     }
 }

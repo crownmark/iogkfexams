@@ -42,12 +42,15 @@
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="ExamGuid" Title="Exam Guid" Visible="false">
                                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Filterable="false" Sortable="false" Width="70px" TextAlign="TextAlign.Center">
+                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Filterable="false" Sortable="false" Width="145px" TextAlign="TextAlign.Center" Frozen="true" FrozenPosition="Radzen.FrozenColumnPosition.Right">
                     <Template Context="exam">
 
-                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Medium"
+                        
+                            <RadzenButton ButtonStyle="Radzen.ButtonStyle.Secondary" Icon="sms" Style="width: 36px" Click="@SendExamSMS" Shade="Radzen.Shade.Light" Variant="Radzen.Variant.Flat" Visible="@(!string.IsNullOrEmpty(exam.StudentMobilePhoneE164))" @onclick:stopPropagation="true" MouseEnter="@SendSMSMouseEnter" MouseLeave="@SendSMSMouseLeave" />
+                            <RadzenButton ButtonStyle="Radzen.ButtonStyle.Secondary" Icon="email" Style="width: 36px" Click="@SendExamEmail" Shade="Radzen.Shade.Light" Variant="Radzen.Variant.Flat" Visible="@(!string.IsNullOrEmpty(exam.StudentEmail))" @onclick:stopPropagation="true" MouseEnter="@SendEmailMouseEnter" MouseLeave="@SendEmailMouseLeave"/>
+                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Medium"
                             Shade="Shade.Lighter" Variant="Variant.Flat"
-                            Click=@(args => GridDeleteButtonClick(args, exam)) @onclick:stopPropagation="true" />
+                            Click=@(args => GridDeleteButtonClick(args, exam)) @onclick:stopPropagation="true" Style="width: 36px" />
                     </Template>
                 </RadzenDataGridColumn>
             </Columns>

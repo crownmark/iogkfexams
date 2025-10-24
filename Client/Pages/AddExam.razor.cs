@@ -43,6 +43,7 @@ namespace IOGKFExams.Client.Pages
 
         protected IEnumerable<IOGKFExams.Server.Models.IOGKFExamsDb.ExamStatus> examStatusesForExamStatusId;
 
+        protected bool sendExam { get; set; } = false;
 
         protected int examStatusesForExamStatusIdCount;
         protected IOGKFExams.Server.Models.IOGKFExamsDb.ExamStatus examStatusesForExamStatusIdValue;
@@ -115,6 +116,38 @@ namespace IOGKFExams.Client.Pages
                 if (response.IsSuccessStatusCode)
                 {
                     NotificationService.Notify(new NotificationMessage() { Severity = NotificationSeverity.Success, Summary = $"Success", Detail = $"Exam Created" });
+                    if (sendExam)
+                    {
+                        if (!string.IsNullOrEmpty(exam.StudentMobilePhoneE164))
+                        {
+                            try
+                            {
+                                //Send SMS MEssage
+                                NotificationService.Notify(new NotificationMessage() { Severity = NotificationSeverity.Success, Summary = $"Success", Detail = $"Exam Sent To Member Phone" });
+
+                            }
+                            catch (Exception ex)
+                            {
+                                NotificationService.Notify(new NotificationMessage() { Severity = NotificationSeverity.Error, Summary = $"Error", Detail = $"Error Sending Exam to Member Phone" });
+
+                            }
+                        }
+                        if (!string.IsNullOrEmpty(exam.StudentEmail))
+                        {
+                            try
+                            {
+                                //Send Email Message
+                                NotificationService.Notify(new NotificationMessage() { Severity = NotificationSeverity.Success, Summary = $"Success", Detail = $"Exam Sent to Member Email" });
+
+                            }
+                            catch (Exception ex)
+                            {
+                                NotificationService.Notify(new NotificationMessage() { Severity = NotificationSeverity.Error, Summary = $"Error", Detail = $"Error Sending Exam to Member Email" });
+
+                            }
+                        }
+                    }
+                    
                     DialogService.Close(exam);
 
                 }
@@ -148,6 +181,15 @@ namespace IOGKFExams.Client.Pages
             {
                 NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Error, Summary = "Error", Detail = "Unable to load" });
             }
+        }
+
+        protected async System.Threading.Tasks.Task ValidatePhone(System.String args)
+        {
+        }
+
+        protected async System.Threading.Tasks.Task CreateAndSendButtonClick(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
+        {
+            sendExam = true;
         }
     }
 }

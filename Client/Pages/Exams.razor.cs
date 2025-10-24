@@ -149,5 +149,70 @@ namespace IOGKFExams.Client.Pages
         {
             TooltipService.Close();
         }
+
+        protected async System.Threading.Tasks.Task SendExamSMS(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
+        {
+            try
+            {
+                NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = $"Success",
+                    Detail = $"Exam sent successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = $"Error",
+                    Detail = $"Unable to send Exam"
+                });
+            }
+        }
+
+        protected async System.Threading.Tasks.Task SendExamEmail(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
+        {
+            try
+            {
+                NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = $"Success",
+                    Detail = $"Exam sent successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = $"Error",
+                    Detail = $"Unable to send Exam"
+                });
+            }
+        }
+
+        protected async System.Threading.Tasks.Task SendSMSMouseEnter(Microsoft.AspNetCore.Components.ElementReference args)
+        {
+            TooltipService.Open(args, "Send Exam SMS to Member");
+        }
+
+        protected async System.Threading.Tasks.Task SendSMSMouseLeave(Microsoft.AspNetCore.Components.ElementReference args)
+        {
+            TooltipService.Close();
+        }
+
+        protected async System.Threading.Tasks.Task SendEmailMouseEnter(Microsoft.AspNetCore.Components.ElementReference args)
+        {
+            TooltipService.Open(args, "Send Exam Email to Member");
+        }
+
+        protected async System.Threading.Tasks.Task SendEmailMouseLeave(Microsoft.AspNetCore.Components.ElementReference args)
+        {
+            TooltipService.Close();
+
+        }
     }
 }

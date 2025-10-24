@@ -44,6 +44,12 @@ namespace IOGKFExams.Server.Models.IOGKFExamsDb
 
         public Country Country { get; set; }
 
+        [MaxLength(255)]
+        public string StudentEmail { get; set; }
+
+        [MaxLength(20)]
+        public string StudentMobilePhoneE164 { get; set; }
+
         public ICollection<ExamQuestion> ExamQuestions { get; set; }
     }
 }

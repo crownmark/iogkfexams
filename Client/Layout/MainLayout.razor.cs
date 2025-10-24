@@ -49,5 +49,17 @@ namespace IOGKFExams.Client.Layout
                 Security.Logout();
             }
         }
+        protected async System.Threading.Tasks.Task PanelMenuItemClick(Radzen.MenuItemEventArgs args)
+        {
+            // Get the current window width using JavaScript interop
+            var width = await JSRuntime.InvokeAsync<int>("eval", "window.innerWidth");
+
+            // Collapse sidebar only on mobile widths (adjust threshold as needed)
+            if (width < 768)
+            {
+                sidebarExpanded = false;
+            }
+        }
+
     }
 }

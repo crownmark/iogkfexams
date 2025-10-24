@@ -1,4 +1,5 @@
-@page "/edit-exam"
+@page "/edit-exam"
+
 @attribute [Authorize]
 
 @inject Microsoft.Extensions.Localization.IStringLocalizer<EditExam> L
@@ -8,29 +9,73 @@
         <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">Cannot save Exam</RadzenAlert>
         <RadzenTemplateForm TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Data="@(exam)" Visible="@(exam != null)" Submit="@FormSubmit">
           <RadzenStack>
-            <RadzenFormField Text="Exam Guid" Variant="Variant.Outlined">
+            <RadzenFormField Text="Exam Guid" Variant="Variant.Outlined" Visible="false">
                   <ChildContent>
                     <RadzenTextBox style="display: block; width: 100%" @bind-Value="@(exam.ExamGuid)" Name="ExamGuid" MaxLength="10" />
               </ChildContent>
             </RadzenFormField>
-            <RadzenFormField Text="Exam Status" Variant="Variant.Outlined">
+            
+            <RadzenFormField Text="First Name" Variant="Variant.Outlined" Visible="true" Component="StudentFirstName">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@exam.StudentFirstName" Name="StudentFirstName" />
+              </ChildContent>
+                  <Helper>
+                      <RadzenRequiredValidator Component="StudentFirstName"></RadzenRequiredValidator>
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Last Name" Component="StudentLastName" Variant="Variant.Outlined" Visible="true">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@exam.StudentLastName" Name="StudentLastName" />
+              </ChildContent>
+              <Helper>
+                      <RadzenRequiredValidator Component="StudentLastName"></RadzenRequiredValidator>
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="IOGKF Number" Variant="Variant.Outlined" Visible="true">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@exam.Iogkfnumber" Name="StudentLastName" Placeholder="" />
+              </ChildContent>
+            </RadzenFormField>
+<RadzenFormField Text="Mobile Phone To Send Exam To" Variant="Variant.Outlined" Visible="true" Component="StudentMobilePhoneE164">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@exam.StudentMobilePhoneE164" Name="StudentMobilePhoneE164" Placeholder="" Change="@ValidatePhone" />
+              </ChildContent>
+                  <Helper>
+                      <RadzenRegexValidator Component="StudentMobilePhoneE164" Text="Enter a valid international phone number (E.164 format, e.g. +14155552671)"
+                        Pattern="^\+[1-9]\d{7,14}$"></RadzenRegexValidator>
+                  </Helper>
+            </RadzenFormField>
+<RadzenFormField Text="Email To Send Exam To" Variant="Variant.Outlined" Visible="true" Component="StudentEmail">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@exam.StudentEmail" Name="StudentMobilePhoneE164" Placeholder="" />
+              </ChildContent>
+            </RadzenFormField>
+            <RadzenFormField Text="Country" Variant="Variant.Outlined" Visible="true" Component="CountryId">
+                  <ChildContent>
+                      <RadzenDropDown TValue="int?" ValueProperty="CountryId" TextProperty="CountryName" @bind-Value="@exam.CountryId" Data="@countries" LoadData="@countriesLoadData" Count="@countriesCount" Name="CountryId"/>
+              </ChildContent>
+                  <Helper>
+                      <RadzenNumericRangeValidator Text="Required" Component="CountryId" Min="1"></RadzenNumericRangeValidator>
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Exam Status" Variant="Variant.Outlined" Visible="false">
                   <ChildContent>
                     <RadzenDropDownDataGrid Data="@(examStatusesForExamStatusId)" TextProperty="Title" ValueProperty="ExamStatusId" AllowClear=true
                           style="display: block; width: 100%" @bind-Value="@(exam.ExamStatusId)" Name="ExamStatusId"
                         SelectedValue=@examStatusesForExamStatusIdValue Count=@examStatusesForExamStatusIdCount LoadData=@examStatusesForExamStatusIdLoadData />
               </ChildContent>
             </RadzenFormField>
-            <RadzenFormField Text="Created Date" Variant="Variant.Outlined">
+            <RadzenFormField Text="Created Date" Variant="Variant.Outlined" Visible="false">
                   <ChildContent>
                     <RadzenDatePicker DateFormat="MM/dd/yyyy" style="display: block; width: 100%" @bind-Value="@(exam.CreatedDate)" Name="CreatedDate" />
               </ChildContent>
             </RadzenFormField>
-            <RadzenFormField Text="Completed Date" Variant="Variant.Outlined">
+            <RadzenFormField Text="Completed Date" Variant="Variant.Outlined" Visible="false">
                   <ChildContent>
                     <RadzenDatePicker DateFormat="MM/dd/yyyy" style="display: block; width: 100%" @bind-Value="@(exam.CompletedDate)" Name="CompletedDate" />
               </ChildContent>
             </RadzenFormField>
-            <RadzenFormField Text="Exam Grade" Variant="Variant.Outlined">
+            <RadzenFormField Text="Exam Grade" Variant="Variant.Outlined" Visible="false">
                   <ChildContent>
                     <RadzenNumeric style="display: block; width: 100%" @bind-Value="@(exam.ExamGrade)" Name="ExamGrade" />
               </ChildContent>
