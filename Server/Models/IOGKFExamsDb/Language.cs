@@ -22,5 +22,7 @@ namespace IOGKFExams.Server.Models.IOGKFExamsDb
         public ICollection<ExamQuestion> ExamQuestions { get; set; }
 
         public ICollection<ExamTemplateQuestion> ExamTemplateQuestions { get; set; }
+
+        public ICollection<ExamTemplate> ExamTemplates { get; set; }
     }
 }

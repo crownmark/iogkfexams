@@ -18,6 +18,10 @@ namespace IOGKFExams.Server.Models.IOGKFExamsDb
         [MaxLength(255)]
         public string ExamTemplateTitle { get; set; }
 
+        public int? LanguageId { get; set; }
+
+        public Language Language { get; set; }
+
         public bool Active { get; set; }
 
         public ICollection<ExamTemplateQuestion> ExamTemplateQuestions { get; set; }

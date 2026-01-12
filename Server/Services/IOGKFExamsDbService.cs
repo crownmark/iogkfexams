@@ -184,10 +184,10 @@ namespace IOGKFExams.Server
             {
                throw new Exception("Item no longer available");
             }
-                
-            var entryToUpdate = Context.Entry(itemToUpdate);
-            entryToUpdate.CurrentValues.SetValues(country);
-            entryToUpdate.State = EntityState.Modified;
+
+            Reset();
+
+            Context.Attach(country).State = EntityState.Modified;
 
             Context.SaveChanges();
 
@@ -203,7 +203,6 @@ namespace IOGKFExams.Server
         {
             var itemToDelete = Context.Countries
                               .Where(i => i.CountryId == countryid)
-                              .Include(i => i.Exams)
                               .FirstOrDefault();
 
             if (itemToDelete == null)
@@ -213,6 +212,7 @@ namespace IOGKFExams.Server
 
             OnCountryDeleted(itemToDelete);
 
+            Reset();
 
             Context.Countries.Remove(itemToDelete);
 
@@ -348,10 +348,11 @@ namespace IOGKFExams.Server
             {
                throw new Exception("Item no longer available");
             }
-                
-            var entryToUpdate = Context.Entry(itemToUpdate);
-            entryToUpdate.CurrentValues.SetValues(examanswer);
-            entryToUpdate.State = EntityState.Modified;
+
+            Reset();
+            examanswer.ExamQuestion = null;
+
+            Context.Attach(examanswer).State = EntityState.Modified;
 
             Context.SaveChanges();
 
@@ -376,6 +377,7 @@ namespace IOGKFExams.Server
 
             OnExamAnswerDeleted(itemToDelete);
 
+            Reset();
 
             Context.ExamAnswers.Remove(itemToDelete);
 
@@ -515,10 +517,13 @@ namespace IOGKFExams.Server
             {
                throw new Exception("Item no longer available");
             }
-                
-            var entryToUpdate = Context.Entry(itemToUpdate);
-            entryToUpdate.CurrentValues.SetValues(examquestion);
-            entryToUpdate.State = EntityState.Modified;
+
+            Reset();
+            examquestion.Exam = null;
+            examquestion.Language = null;
+            examquestion.Rank = null;
+
+            Context.Attach(examquestion).State = EntityState.Modified;
 
             Context.SaveChanges();
 
@@ -534,7 +539,6 @@ namespace IOGKFExams.Server
         {
             var itemToDelete = Context.ExamQuestions
                               .Where(i => i.ExamQuestionsId == examquestionsid)
-                              .Include(i => i.ExamAnswers)
                               .FirstOrDefault();
 
             if (itemToDelete == null)
@@ -544,6 +548,7 @@ namespace IOGKFExams.Server
 
             OnExamQuestionDeleted(itemToDelete);
 
+            Reset();
 
             Context.ExamQuestions.Remove(itemToDelete);
 
@@ -681,10 +686,12 @@ namespace IOGKFExams.Server
             {
                throw new Exception("Item no longer available");
             }
-                
-            var entryToUpdate = Context.Entry(itemToUpdate);
-            entryToUpdate.CurrentValues.SetValues(exam);
-            entryToUpdate.State = EntityState.Modified;
+
+            Reset();
+            exam.Country = null;
+            exam.ExamStatus = null;
+
+            Context.Attach(exam).State = EntityState.Modified;
 
             Context.SaveChanges();
 
@@ -700,7 +707,6 @@ namespace IOGKFExams.Server
         {
             var itemToDelete = Context.Exams
                               .Where(i => i.ExamId == examid)
-                              .Include(i => i.ExamQuestions)
                               .FirstOrDefault();
 
             if (itemToDelete == null)
@@ -710,6 +716,7 @@ namespace IOGKFExams.Server
 
             OnExamDeleted(itemToDelete);
 
+            Reset();
 
             Context.Exams.Remove(itemToDelete);
 
@@ -843,10 +850,10 @@ namespace IOGKFExams.Server
             {
                throw new Exception("Item no longer available");
             }
-                
-            var entryToUpdate = Context.Entry(itemToUpdate);
-            entryToUpdate.CurrentValues.SetValues(examstatus);
-            entryToUpdate.State = EntityState.Modified;
+
+            Reset();
+
+            Context.Attach(examstatus).State = EntityState.Modified;
 
             Context.SaveChanges();
 
@@ -862,7 +869,6 @@ namespace IOGKFExams.Server
         {
             var itemToDelete = Context.ExamStatuses
                               .Where(i => i.ExamStatusId == examstatusid)
-                              .Include(i => i.Exams)
                               .FirstOrDefault();
 
             if (itemToDelete == null)
@@ -872,6 +878,7 @@ namespace IOGKFExams.Server
 
             OnExamStatusDeleted(itemToDelete);
 
+            Reset();
 
             Context.ExamStatuses.Remove(itemToDelete);
 
@@ -1007,10 +1014,11 @@ namespace IOGKFExams.Server
             {
                throw new Exception("Item no longer available");
             }
-                
-            var entryToUpdate = Context.Entry(itemToUpdate);
-            entryToUpdate.CurrentValues.SetValues(examtemplateanswer);
-            entryToUpdate.State = EntityState.Modified;
+
+            Reset();
+            examtemplateanswer.ExamTemplateQuestion = null;
+
+            Context.Attach(examtemplateanswer).State = EntityState.Modified;
 
             Context.SaveChanges();
 
@@ -1035,6 +1043,7 @@ namespace IOGKFExams.Server
 
             OnExamTemplateAnswerDeleted(itemToDelete);
 
+            Reset();
 
             Context.ExamTemplateAnswers.Remove(itemToDelete);
 
@@ -1174,10 +1183,13 @@ namespace IOGKFExams.Server
             {
                throw new Exception("Item no longer available");
             }
-                
-            var entryToUpdate = Context.Entry(itemToUpdate);
-            entryToUpdate.CurrentValues.SetValues(examtemplatequestion);
-            entryToUpdate.State = EntityState.Modified;
+
+            Reset();
+            examtemplatequestion.ExamTemplate = null;
+            examtemplatequestion.Language = null;
+            examtemplatequestion.Rank = null;
+
+            Context.Attach(examtemplatequestion).State = EntityState.Modified;
 
             Context.SaveChanges();
 
@@ -1193,7 +1205,6 @@ namespace IOGKFExams.Server
         {
             var itemToDelete = Context.ExamTemplateQuestions
                               .Where(i => i.ExamTemplateQuestionsId == examtemplatequestionsid)
-                              .Include(i => i.ExamTemplateAnswers)
                               .FirstOrDefault();
 
             if (itemToDelete == null)
@@ -1203,6 +1214,7 @@ namespace IOGKFExams.Server
 
             OnExamTemplateQuestionDeleted(itemToDelete);
 
+            Reset();
 
             Context.ExamTemplateQuestions.Remove(itemToDelete);
 
@@ -1237,6 +1249,7 @@ namespace IOGKFExams.Server
         {
             var items = Context.ExamTemplates.AsQueryable();
 
+            items = items.Include(i => i.Language);
 
             if (query != null)
             {
@@ -1267,6 +1280,7 @@ namespace IOGKFExams.Server
                               .AsNoTracking()
                               .Where(i => i.ExamTemplateId == examtemplateid);
 
+            items = items.Include(i => i.Language);
  
             OnGetExamTemplateByExamTemplateId(ref items);
 
@@ -1336,10 +1350,11 @@ namespace IOGKFExams.Server
             {
                throw new Exception("Item no longer available");
             }
-                
-            var entryToUpdate = Context.Entry(itemToUpdate);
-            entryToUpdate.CurrentValues.SetValues(examtemplate);
-            entryToUpdate.State = EntityState.Modified;
+
+            Reset();
+            examtemplate.Language = null;
+
+            Context.Attach(examtemplate).State = EntityState.Modified;
 
             Context.SaveChanges();
 
@@ -1355,7 +1370,6 @@ namespace IOGKFExams.Server
         {
             var itemToDelete = Context.ExamTemplates
                               .Where(i => i.ExamTemplateId == examtemplateid)
-                              .Include(i => i.ExamTemplateQuestions)
                               .FirstOrDefault();
 
             if (itemToDelete == null)
@@ -1365,6 +1379,7 @@ namespace IOGKFExams.Server
 
             OnExamTemplateDeleted(itemToDelete);
 
+            Reset();
 
             Context.ExamTemplates.Remove(itemToDelete);
 
@@ -1498,10 +1513,10 @@ namespace IOGKFExams.Server
             {
                throw new Exception("Item no longer available");
             }
-                
-            var entryToUpdate = Context.Entry(itemToUpdate);
-            entryToUpdate.CurrentValues.SetValues(language);
-            entryToUpdate.State = EntityState.Modified;
+
+            Reset();
+
+            Context.Attach(language).State = EntityState.Modified;
 
             Context.SaveChanges();
 
@@ -1517,8 +1532,6 @@ namespace IOGKFExams.Server
         {
             var itemToDelete = Context.Languages
                               .Where(i => i.LanguageId == languageid)
-                              .Include(i => i.ExamQuestions)
-                              .Include(i => i.ExamTemplateQuestions)
                               .FirstOrDefault();
 
             if (itemToDelete == null)
@@ -1528,6 +1541,7 @@ namespace IOGKFExams.Server
 
             OnLanguageDeleted(itemToDelete);
 
+            Reset();
 
             Context.Languages.Remove(itemToDelete);
 
@@ -1661,10 +1675,10 @@ namespace IOGKFExams.Server
             {
                throw new Exception("Item no longer available");
             }
-                
-            var entryToUpdate = Context.Entry(itemToUpdate);
-            entryToUpdate.CurrentValues.SetValues(rank);
-            entryToUpdate.State = EntityState.Modified;
+
+            Reset();
+
+            Context.Attach(rank).State = EntityState.Modified;
 
             Context.SaveChanges();
 
@@ -1680,8 +1694,6 @@ namespace IOGKFExams.Server
         {
             var itemToDelete = Context.Ranks
                               .Where(i => i.RankId == rankid)
-                              .Include(i => i.ExamQuestions)
-                              .Include(i => i.ExamTemplateQuestions)
                               .FirstOrDefault();
 
             if (itemToDelete == null)
@@ -1691,6 +1703,7 @@ namespace IOGKFExams.Server
 
             OnRankDeleted(itemToDelete);
 
+            Reset();
 
             Context.Ranks.Remove(itemToDelete);
 

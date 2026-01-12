@@ -113,7 +113,7 @@ namespace IOGKFExams.Server.Controllers.IOGKFExamsDb
                 this.context.SaveChanges();
 
                 var itemToReturn = this.context.ExamTemplates.Where(i => i.ExamTemplateId == key);
-                
+                Request.QueryString = Request.QueryString.Add("$expand", "Language");
                 this.OnAfterExamTemplateUpdated(item);
                 return new ObjectResult(SingleResult.Create(itemToReturn));
             }
@@ -148,7 +148,7 @@ namespace IOGKFExams.Server.Controllers.IOGKFExamsDb
                 this.context.SaveChanges();
 
                 var itemToReturn = this.context.ExamTemplates.Where(i => i.ExamTemplateId == key);
-                
+                Request.QueryString = Request.QueryString.Add("$expand", "Language");
                 this.OnAfterExamTemplateUpdated(item);
                 return new ObjectResult(SingleResult.Create(itemToReturn));
             }
@@ -184,7 +184,7 @@ namespace IOGKFExams.Server.Controllers.IOGKFExamsDb
 
                 var itemToReturn = this.context.ExamTemplates.Where(i => i.ExamTemplateId == item.ExamTemplateId);
 
-                
+                Request.QueryString = Request.QueryString.Add("$expand", "Language");
 
                 this.OnAfterExamTemplateCreated(item);
 

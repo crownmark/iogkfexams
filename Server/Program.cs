@@ -67,6 +67,11 @@ builder.Services.AddControllers().AddOData(o =>
 });
 builder.Services.AddScoped<AuthenticationStateProvider, IOGKFExams.Client.ApplicationAuthenticationStateProvider>();
 builder.Services.AddLocalization();
+builder.Services.AddDbContext<IOGKFExams.Server.Data.IOGKFExamsDbContext>(options =>
+{
+    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+    options.UseSqlServer(builder.Configuration.GetConnectionString("IOGKFExamsDbConnection"));
+});
 var app = builder.Build();
 var forwardingOptions = new ForwardedHeadersOptions()
 {
