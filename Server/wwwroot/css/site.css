@@ -1,3 +1,62 @@
+/*
+  You can add custom CSS rules or import files here.
+*/
+/* My Customer Blinking Option */
+@keyframes pulseBlink {
+    0% {
+        opacity: 1;
+        box-shadow: 0 0 0 0 rgba(--rz-primary, 0.7);
+/*        box-shadow: 0 0 0 0 rgba(33, 150, 243, 0.7);*/
+    }
+
+    50% {
+        opacity: 0.5;
+        box-shadow: 0 0 0 8px rgba(--rz-primary, 0);
+    }
+
+    100% {
+        opacity: 1;
+        box-shadow: 0 0 0 0 rgba(--rz-primary, 0);
+    }
+}
+
+.blink-button {
+    animation: pulseBlink 1s infinite;
+}
+
+.smart-player-embed-container {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 720px;
+    height: 0;
+    overflow: hidden;
+    padding-top: calc(480 / 720 * 100%);
+    position: relative;
+}
+
+.smart-player-embed-iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    max-width: 720px;
+    max-height: 480px;
+}
+
+    .smart-player-embed-iframe:-ms-fullscreen {
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+ul[role=tablist] {
+    flex-wrap: wrap;
+}
+/*
+  END custom CSS rules or import files here.
+*/
+
+
 #blazor-error-ui {
     background: lightyellow;
     bottom: 0;
@@ -19,88 +78,26 @@
 
 :root {
     font-size: var(--rz-root-font-size);
-    --rz-white: #ffffff;
-    --rz-black: #000000;
-    --rz-base: #eeeeee;
-    --rz-base-50: #fafafa;
-    --rz-base-100: #f5f5f5;
-    --rz-base-200: #eeeeee;
-    --rz-base-300: #e0e0e0;
-    --rz-base-400: #bdbdbd;
-    --rz-base-500: #9e9e9e;
-    --rz-base-600: #757575;
-    --rz-base-700: #616161;
-    --rz-base-800: #424242;
-    --rz-base-900: #212121;
-    --rz-base-light: #f5f5f5;
-    --rz-base-lighter: #ffffff;
-    --rz-base-dark: #757575;
-    --rz-base-darker: #212121;
-    --rz-primary: #E31A37;
-    --rz-primary-light: #e8475f;
-    --rz-primary-lighter: rgba(227,26,55,0.12);
-    --rz-primary-dark: #b5142c;
-    --rz-primary-darker: #9a1125;
+    --rz-primary: #ed3236;
+    --rz-primary-light: #f05b5e;
+    --rz-primary-lighter: rgba(237,50,54,0.12);
+    --rz-primary-dark: #bd282b;
+    --rz-primary-darker: #a12224;
+    --rz-on-primary: #ffffff;
+    --rz-on-primary-light: #ffffff;
+    --rz-on-primary-lighter: #ed3236;
+    --rz-on-primary-dark: #ffffff;
+    --rz-on-primary-darker: #ffffff;
     --rz-secondary: #000000;
     --rz-secondary-light: #333;
     --rz-secondary-lighter: rgba(0,0,0,0.12);
     --rz-secondary-dark: #000;
     --rz-secondary-darker: #000;
-    --rz-info: #2196f3;
-    --rz-info-light: #4dabf5;
-    --rz-info-lighter: rgba(33, 150, 243, 0.2);
-    --rz-info-dark: #1a78c2;
-    --rz-info-darker: #1666a5;
-    --rz-success: #4caf50;
-    --rz-success-light: #70bf73;
-    --rz-success-lighter: rgba(76, 175, 80, 0.16);
-    --rz-success-dark: #3d8c40;
-    --rz-success-darker: #347736;
-    --rz-warning: #ff9800;
-    --rz-warning-light: #ffad33;
-    --rz-warning-lighter: rgba(255, 152, 0, 0.2);
-    --rz-warning-dark: #cc7a00;
-    --rz-warning-darker: #ad6700;
-    --rz-danger: #f44336;
-    --rz-danger-light: #f6695e;
-    --rz-danger-lighter: rgba(244, 67, 54, 0.2);
-    --rz-danger-dark: #c3362b;
-    --rz-danger-darker: #a62e25;
-    --rz-on-base: #212121;
-    --rz-on-base-light: #212121;
-    --rz-on-base-lighter: #212121;
-    --rz-on-base-dark: #ffffff;
-    --rz-on-base-darker: #ffffff;
-    --rz-on-primary: #ffffff;
-    --rz-on-primary-lighter: #e31a37;
-    --rz-on-primary-light: #ffffff;
-    --rz-on-primary-dark: #ffffff;
-    --rz-on-primary-darker: #ffffff;
     --rz-on-secondary: #ffffff;
-    --rz-on-secondary-lighter: #000;
     --rz-on-secondary-light: #ffffff;
+    --rz-on-secondary-lighter: #000;
     --rz-on-secondary-dark: #ffffff;
     --rz-on-secondary-darker: #ffffff;
-    --rz-on-info: #ffffff;
-    --rz-on-info-lighter: #2196f3;
-    --rz-on-info-light: #ffffff;
-    --rz-on-info-dark: #ffffff;
-    --rz-on-info-darker: #ffffff;
-    --rz-on-success: #ffffff;
-    --rz-on-success-lighter: #4caf50;
-    --rz-on-success-light: #ffffff;
-    --rz-on-success-dark: #ffffff;
-    --rz-on-success-darker: #ffffff;
-    --rz-on-warning: #ffffff;
-    --rz-on-warning-lighter: #ff9800;
-    --rz-on-warning-light: #ffffff;
-    --rz-on-warning-dark: #ffffff;
-    --rz-on-warning-darker: #ffffff;
-    --rz-on-danger: #ffffff;
-    --rz-on-danger-lighter: #f44336;
-    --rz-on-danger-light: #ffffff;
-    --rz-on-danger-dark: #ffffff;
-    --rz-on-danger-darker: #ffffff;
 }
 
 body {

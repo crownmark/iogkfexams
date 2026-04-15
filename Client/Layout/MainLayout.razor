@@ -42,8 +42,8 @@
             <RadzenText Text="IOGKF Exams" TextStyle="Radzen.Blazor.TextStyle.Subtitle1" class="rz-mb-0" style="color: var(--rz-sidebar-color);" />
         </RadzenStack>
         <RadzenPanelMenu>
-            <RadzenPanelMenuItem Text="Home" Path="" Icon="home" Click="@PanelMenuItemClick" />
-            <RadzenPanelMenuItem Path="exams" Text="Exams" Icon="quiz" Click="@PanelMenuItemClick"></RadzenPanelMenuItem>
+            <RadzenPanelMenuItem Text="@L["PanelMenuItem0.Text"]" Path="" Icon="home" Click="@PanelMenuItemClick" />
+            <RadzenPanelMenuItem Path="exams" Text="@L["PanelMenuItem1.Text"]" Icon="quiz" Click="@PanelMenuItemClick"></RadzenPanelMenuItem>
             <RadzenPanelMenuItem Text="Admin" Icon="shield_person" Expanded="true" >
                 <RadzenPanelMenuItem Path="countries" Text="Countries" Icon="flag" Click="@PanelMenuItemClick"></RadzenPanelMenuItem>
                 <RadzenPanelMenuItem Path="exam-statuses" Text="Exam Statuses" Icon="lists" Click="@PanelMenuItemClick"></RadzenPanelMenuItem>

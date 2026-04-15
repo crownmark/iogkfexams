@@ -7,15 +7,15 @@
 <RadzenStack>
     <RadzenRow AlignItems="AlignItems.Center">
         <RadzenColumn Size="12" SizeMD="6">
-            <RadzenText Text="Exams" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
+            <RadzenText Text="@L["Text0.Text"]" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
         </RadzenColumn>
         <RadzenColumn Size="12" SizeMD="6">
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
-                <RadzenSplitButton Icon="get_app" Text="Export" Click="@ExportClick" Variant="Variant.Flat" Shade="Shade.Lighter">
+                <RadzenSplitButton Icon="get_app" Text="@L["SplitButton0.Text"]" Click="@ExportClick" Variant="Variant.Flat" Shade="Shade.Lighter">
                     <RadzenSplitButtonItem Text="Excel" Value="xlsx" />
                     <RadzenSplitButtonItem Text="CSV" Value="csv" />
                 </RadzenSplitButton>
-                <RadzenButton Icon="add_circle_outline" Text="Add" Click="@AddButtonClick" Variant="Variant.Flat" />
+                <RadzenButton Icon="add_circle_outline" Text="@L["Button0.Text"]" Click="@AddButtonClick" Variant="Variant.Flat" />
             </RadzenStack>
         </RadzenColumn>
     </RadzenRow>
@@ -25,7 +25,7 @@
             <RadzenDataGrid @ref="grid0" ColumnWidth="200px" IsLoading="@gridLoading" Responsive="true" AllowFiltering="true" FilterMode="FilterMode.Advanced" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
             Data="@(exams)" LoadData="@Grid0LoadData" Count="@count" TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" RowSelect="@EditRow">
             <Columns>
-                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="ExamId" Title="Exam Id">
+                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="ExamId" Title="@L["DataGridColumn0.Title"]">
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="ExamSessionCode" Title="Session Code"></RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="Country.CountryName" Title="Country"></RadzenDataGridColumn>

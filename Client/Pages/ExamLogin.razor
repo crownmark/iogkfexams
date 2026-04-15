@@ -11,7 +11,7 @@
             Method="post">
             <RadzenAlert Shade="Radzen.Shade.Lighter" Variant="Radzen.Variant.Flat" Size="Radzen.AlertSize.Small" AlertStyle="Radzen.AlertStyle.Danger" Visible="@errorVisible">@error</RadzenAlert>
             <RadzenAlert Shade="Radzen.Shade.Lighter" Variant="Radzen.Variant.Flat" Size="Radzen.AlertSize.Small" AlertStyle="Radzen.AlertStyle.Info" Visible="@infoVisible">@info</RadzenAlert>
-            <RadzenLogin AllowResetPassword="false" AllowRegister="false" FormFieldVariant="Variant.Outlined" UserText="Exam ID" UserRequired="Exam ID is required" PasswordText="Exam Session Code" PasswordRequired="Exam Session Code is required" LoginText="Take Test" Login="@TakeExam"/>
+            <RadzenLogin AllowResetPassword="false" AllowRegister="false" FormFieldVariant="Variant.Outlined" UserText="Exam ID" UserRequired="Exam ID is required" PasswordText="Exam Session Code" PasswordRequired="Exam Session Code is required" LoginText="Take Test" Login="@TakeExam" AutoComplete="false"/>
         </RadzenTemplateForm>
     </RadzenColumn>
 </RadzenRow>

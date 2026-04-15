@@ -118,18 +118,20 @@ namespace IOGKFExams.Client.Pages
             {
                 if (AllowCompletingExam())
                 {
-                    exam.CompletedDate = DateTimeOffset.UtcNow;
-                    exam.ExamStatusId = 3;
-                    exam.ExamGrade = GradeExam();
-                    await IOGKFExamsDbService.UpdateExam(exam.ExamId, exam);
-                    NavigationManager.NavigateTo($"/exam-results/{exam.ExamGuid}");
+                    if(await DialogService.Confirm("Are you sure you want to submit this exam?") == true)
+                    {
+                        exam.CompletedDate = DateTimeOffset.UtcNow;
+                        exam.ExamStatusId = 3;
+                        exam.ExamGrade = GradeExam();
+                        await IOGKFExamsDbService.UpdateExam(exam.ExamId, exam);
+                        NavigationManager.NavigateTo($"/exam-results/{exam.ExamGuid}");
+                    }
                 }
                 else
                 {
                     NotificationService.Notify(new NotificationMessage() { Severity = NotificationSeverity.Warning, Summary = $"Incomplete", Detail = $"Unable to complete Exam.  All questions must be answered." });
 
                 }
-
 
             }
             catch (Exception ex)
