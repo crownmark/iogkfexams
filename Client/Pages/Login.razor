@@ -3,7 +3,7 @@
 @page "/login"
 
 <PageTitle>Login</PageTitle>
-<RadzenText Text="Exam Management Login" TextStyle="Radzen.Blazor.TextStyle.H5" class="mb-4" TagName="Radzen.Blazor.TagName.H2" />
+<RadzenText Text="Exam Management Login" TextStyle="Radzen.Blazor.TextStyle.H5" class="mb-4" TagName="Radzen.Blazor.TagName.H2" TextAlign="Radzen.TextAlign.Center" />
 <RadzenRow>
     <RadzenColumn SizeMD="12">
         <RadzenTemplateForm Action="@($"account/login?redirectUrl={redirectUrl}")" Data="@("login")"
@@ -12,7 +12,7 @@
             <RadzenAlert Shade="Radzen.Shade.Lighter" Variant="Radzen.Variant.Flat" Size="Radzen.AlertSize.Small" AlertStyle="Radzen.AlertStyle.Info" Visible="@infoVisible">@info</RadzenAlert>
             <RadzenLogin AllowResetPassword="true" AllowRegister="false" FormFieldVariant="Variant.Outlined"
                     ResetPassword="@ResetPassword"
-                    Register="@Register" AllowRememberMe="true"
+                    Register="@Register" AllowRememberMe="false" Style="width: 100%"
             />
             <RadzenStack Orientation="Radzen.Orientation.Vertical" Style="margin-top: 10px">
             <RadzenButton Text="Take Exam" Icon="passkey" Style="width: 100%" ButtonStyle="Radzen.ButtonStyle.Secondary" Click="@TakeExamButtonClick" />

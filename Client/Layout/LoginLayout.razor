@@ -4,10 +4,10 @@
 <RadzenComponents />
 
 <RadzenLayout style="background: url('images/login.jpg'); background-size: cover;">
-    <RadzenBody>
+    <RadzenBody Style="padding-top: 0px; padding-bottom: 0px">
         <RadzenStack JustifyContent="Radzen.JustifyContent.Center" Class="rz-mx-auto rz-p-4" Style="max-width: 1440px; height: 100%;">
             <RadzenCard class="rz-shadow-3 rz-border-radius-4" style="padding: 0; overflow: hidden; background-color: var(--rz-base-background-color);">
-                <RadzenRow Gap="0">
+                <RadzenRow Gap="0" Style="width: 100%" AlignItems="Radzen.AlignItems.Center">
                     <RadzenColumn Size="12" SizeSM="6" Class="rz-background-color-primary rz-p-12" style="background-image: radial-gradient(circle at 4rem 4rem, var(--rz-primary-dark) 0%, var(--rz-primary-darker) 80%); position: relative">
                         <RadzenImage Path="images/IOGKFLogo.png" Style="height: 100px"></RadzenImage>
                         <RadzenText Text="IOGKF Exam Management" TextStyle="Radzen.Blazor.TextStyle.H3" class="rz-mt-4 rz-mt-md-12 rz-pt-0 rz-mb-6 rz-color-on-primary rz-display-none rz-display-sm-block" Style="padding-top: 0px" />
@@ -15,7 +15,7 @@
                             Fill in your login credentials to proceed.
                         </RadzenText>
                     </RadzenColumn>
-                    <RadzenColumn Size="12" SizeSM="6" class="rz-p-12">
+                    <RadzenColumn Size="12" SizeSM="6" Style="width: 100%; padding-top: 15px; padding-bottom: 15px; padding-right: 20px; padding-left: 20px">
                         @Body
                     </RadzenColumn>
                 </RadzenRow>
