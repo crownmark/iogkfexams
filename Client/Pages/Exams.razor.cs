@@ -214,5 +214,10 @@ namespace IOGKFExams.Client.Pages
             TooltipService.Close();
 
         }
+
+        protected async System.Threading.Tasks.Task TakeTestButtonClick(Microsoft.AspNetCore.Components.Web.MouseEventArgs args, IOGKFExams.Server.Models.IOGKFExamsDb.Exam exam)
+        {
+            await DialogService.OpenAsync<TakeExam>("Exam", new Dictionary<string, object>() { {"ExamGUID", exam.ExamGuid} }, new DialogOptions { Width = "100% "});
+        }
     }
 }

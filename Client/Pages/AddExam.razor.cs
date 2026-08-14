@@ -47,7 +47,7 @@ namespace IOGKFExams.Client.Pages
 
         protected int examStatusesForExamStatusIdCount;
         protected IOGKFExams.Server.Models.IOGKFExamsDb.ExamStatus examStatusesForExamStatusIdValue;
-
+        protected bool creatingExam { get; set; } = false;
         [Inject]
         protected SecurityService Security { get; set; }
         protected async Task examStatusesForExamStatusIdLoadData(LoadDataArgs args)
@@ -104,6 +104,8 @@ namespace IOGKFExams.Client.Pages
         {
             try
             {
+                creatingExam = true;
+                StateHasChanged();
                 exam.CreatedDate = DateTimeOffset.UtcNow;
                 exam.ExamStatusId = 1;
                 exam.ExamGuid = Guid.NewGuid().ToString();
@@ -147,18 +149,23 @@ namespace IOGKFExams.Client.Pages
                             }
                         }
                     }
+                    creatingExam = false;
                     
                     DialogService.Close(exam);
 
                 }
                 else
                 {
+                    creatingExam = false;
+
                     errorVisible = true;
                 }
             }
             catch (Exception ex)
             {
                 errorVisible = true;
+                creatingExam = false;
+
             }
         }
 

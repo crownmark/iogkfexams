@@ -42,7 +42,7 @@
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="ExamGuid" Title="Exam Guid" Visible="false">
                                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Filterable="false" Sortable="false" Width="145px" TextAlign="TextAlign.Center" Frozen="true" FrozenPosition="Radzen.FrozenColumnPosition.Right">
+                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Filterable="false" Sortable="false" Width="285px" TextAlign="TextAlign.Center" Frozen="true" FrozenPosition="Radzen.FrozenColumnPosition.Right">
                     <Template Context="exam">
 
                         
@@ -51,6 +51,7 @@
                             <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Medium"
                             Shade="Shade.Lighter" Variant="Variant.Flat"
                             Click=@(args => GridDeleteButtonClick(args, exam)) @onclick:stopPropagation="true" Style="width: 36px" />
+                            <RadzenButton Text="Take Test" Icon="quiz" Click="@(args => TakeTestButtonClick(args, exam))" @onclick:stopPropagation="true"></RadzenButton>
                     </Template>
                 </RadzenDataGridColumn>
             </Columns>

@@ -88,8 +88,8 @@
             </RadzenFormField>
           </RadzenStack>
           <RadzenStack style="margin-top:1rem;" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem" Wrap="Radzen.FlexWrap.Wrap">
-                    <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Create Exam" Variant="Variant.Flat" Style="width: 100%" />
-            <RadzenButton ButtonStyle="Radzen.ButtonStyle.Secondary" ButtonType="ButtonType.Submit" Icon="send" Text="Create & Send To Member" Variant="Variant.Flat" Click="@CreateAndSendButtonClick" Style="width: 100%" Visible="@(!string.IsNullOrEmpty(exam.StudentEmail) || !string.IsNullOrEmpty(exam.StudentMobilePhoneE164))" />
+                    <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Create Exam" Variant="Variant.Flat" Style="width: 100%" BusyText="Creating Exam" IsBusy="@creatingExam" />
+            <RadzenButton ButtonStyle="Radzen.ButtonStyle.Secondary" ButtonType="ButtonType.Submit" Icon="send" Text="Create & Send To Member" Variant="Variant.Flat" Click="@CreateAndSendButtonClick" Style="width: 100%" Visible="@(!string.IsNullOrEmpty(exam.StudentEmail) || !string.IsNullOrEmpty(exam.StudentMobilePhoneE164))" BusyText="Creating Exam" IsBusy="@creatingExam" />
                     <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancel" Variant="Variant.Flat" Click="@CancelButtonClick" Style="width: 100%"  />
           </RadzenStack>
         </RadzenTemplateForm>
