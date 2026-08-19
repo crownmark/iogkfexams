@@ -17,12 +17,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace IOGKFExams.Server.Controllers.IOGKFExamsDb
 {
-    [Route("odata/IOGKFExamsDb/Exams")]
-    public partial class ExamsController : ODataController
+    [Route("odata/IOGKFExamsDb/ExamSections")]
+    public partial class ExamSectionsController : ODataController
     {
         private IOGKFExams.Server.Data.IOGKFExamsDbContext context;
 
-        public ExamsController(IOGKFExams.Server.Data.IOGKFExamsDbContext context)
+        public ExamSectionsController(IOGKFExams.Server.Data.IOGKFExamsDbContext context)
         {
             this.context = context;
         }
@@ -30,34 +30,34 @@ namespace IOGKFExams.Server.Controllers.IOGKFExamsDb
     
         [HttpGet]
         [EnableQuery(MaxExpansionDepth=10,MaxAnyAllExpressionDepth=10,MaxNodeCount=1000)]
-        public IEnumerable<IOGKFExams.Server.Models.IOGKFExamsDb.Exam> GetExams()
+        public IEnumerable<IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection> GetExamSections()
         {
-            var items = this.context.Exams.AsQueryable<IOGKFExams.Server.Models.IOGKFExamsDb.Exam>();
-            this.OnExamsRead(ref items);
+            var items = this.context.ExamSections.AsQueryable<IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection>();
+            this.OnExamSectionsRead(ref items);
 
             return items;
         }
 
-        partial void OnExamsRead(ref IQueryable<IOGKFExams.Server.Models.IOGKFExamsDb.Exam> items);
+        partial void OnExamSectionsRead(ref IQueryable<IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection> items);
 
-        partial void OnExamGet(ref SingleResult<IOGKFExams.Server.Models.IOGKFExamsDb.Exam> item);
+        partial void OnExamSectionGet(ref SingleResult<IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection> item);
 
         [EnableQuery(MaxExpansionDepth=10,MaxAnyAllExpressionDepth=10,MaxNodeCount=1000)]
-        [HttpGet("/odata/IOGKFExamsDb/Exams(ExamId={ExamId})")]
-        public SingleResult<IOGKFExams.Server.Models.IOGKFExamsDb.Exam> GetExam(int key)
+        [HttpGet("/odata/IOGKFExamsDb/ExamSections(ExamSectionId={ExamSectionId})")]
+        public SingleResult<IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection> GetExamSection(int key)
         {
-            var items = this.context.Exams.Where(i => i.ExamId == key);
+            var items = this.context.ExamSections.Where(i => i.ExamSectionId == key);
             var result = SingleResult.Create(items);
 
-            OnExamGet(ref result);
+            OnExamSectionGet(ref result);
 
             return result;
         }
-        partial void OnExamDeleted(IOGKFExams.Server.Models.IOGKFExamsDb.Exam item);
-        partial void OnAfterExamDeleted(IOGKFExams.Server.Models.IOGKFExamsDb.Exam item);
+        partial void OnExamSectionDeleted(IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection item);
+        partial void OnAfterExamSectionDeleted(IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection item);
 
-        [HttpDelete("/odata/IOGKFExamsDb/Exams(ExamId={ExamId})")]
-        public IActionResult DeleteExam(int key)
+        [HttpDelete("/odata/IOGKFExamsDb/ExamSections(ExamSectionId={ExamSectionId})")]
+        public IActionResult DeleteExamSection(int key)
         {
             try
             {
@@ -67,18 +67,18 @@ namespace IOGKFExams.Server.Controllers.IOGKFExamsDb
                 }
 
 
-                var item = this.context.Exams
-                    .Where(i => i.ExamId == key)
+                var item = this.context.ExamSections
+                    .Where(i => i.ExamSectionId == key)
                     .FirstOrDefault();
 
                 if (item == null)
                 {
                     return BadRequest();
                 }
-                this.OnExamDeleted(item);
-                this.context.Exams.Remove(item);
+                this.OnExamSectionDeleted(item);
+                this.context.ExamSections.Remove(item);
                 this.context.SaveChanges();
-                this.OnAfterExamDeleted(item);
+                this.OnAfterExamSectionDeleted(item);
 
                 return new NoContentResult();
 
@@ -90,12 +90,12 @@ namespace IOGKFExams.Server.Controllers.IOGKFExamsDb
             }
         }
 
-        partial void OnExamUpdated(IOGKFExams.Server.Models.IOGKFExamsDb.Exam item);
-        partial void OnAfterExamUpdated(IOGKFExams.Server.Models.IOGKFExamsDb.Exam item);
+        partial void OnExamSectionUpdated(IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection item);
+        partial void OnAfterExamSectionUpdated(IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection item);
 
-        [HttpPut("/odata/IOGKFExamsDb/Exams(ExamId={ExamId})")]
+        [HttpPut("/odata/IOGKFExamsDb/ExamSections(ExamSectionId={ExamSectionId})")]
         [EnableQuery(MaxExpansionDepth=10,MaxAnyAllExpressionDepth=10,MaxNodeCount=1000)]
-        public IActionResult PutExam(int key, [FromBody]IOGKFExams.Server.Models.IOGKFExamsDb.Exam item)
+        public IActionResult PutExamSection(int key, [FromBody]IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection item)
         {
             try
             {
@@ -104,17 +104,17 @@ namespace IOGKFExams.Server.Controllers.IOGKFExamsDb
                     return BadRequest(ModelState);
                 }
 
-                if (item == null || (item.ExamId != key))
+                if (item == null || (item.ExamSectionId != key))
                 {
                     return BadRequest();
                 }
-                this.OnExamUpdated(item);
-                this.context.Exams.Update(item);
+                this.OnExamSectionUpdated(item);
+                this.context.ExamSections.Update(item);
                 this.context.SaveChanges();
 
-                var itemToReturn = this.context.Exams.Where(i => i.ExamId == key);
-                Request.QueryString = Request.QueryString.Add("$expand", "Country,ExamStatus,Language");
-                this.OnAfterExamUpdated(item);
+                var itemToReturn = this.context.ExamSections.Where(i => i.ExamSectionId == key);
+                
+                this.OnAfterExamSectionUpdated(item);
                 return new ObjectResult(SingleResult.Create(itemToReturn));
             }
             catch(Exception ex)
@@ -124,9 +124,9 @@ namespace IOGKFExams.Server.Controllers.IOGKFExamsDb
             }
         }
 
-        [HttpPatch("/odata/IOGKFExamsDb/Exams(ExamId={ExamId})")]
+        [HttpPatch("/odata/IOGKFExamsDb/ExamSections(ExamSectionId={ExamSectionId})")]
         [EnableQuery(MaxExpansionDepth=10,MaxAnyAllExpressionDepth=10,MaxNodeCount=1000)]
-        public IActionResult PatchExam(int key, [FromBody]Delta<IOGKFExams.Server.Models.IOGKFExamsDb.Exam> patch)
+        public IActionResult PatchExamSection(int key, [FromBody]Delta<IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection> patch)
         {
             try
             {
@@ -135,7 +135,7 @@ namespace IOGKFExams.Server.Controllers.IOGKFExamsDb
                     return BadRequest(ModelState);
                 }
 
-                var item = this.context.Exams.Where(i => i.ExamId == key).FirstOrDefault();
+                var item = this.context.ExamSections.Where(i => i.ExamSectionId == key).FirstOrDefault();
 
                 if (item == null)
                 {
@@ -143,13 +143,13 @@ namespace IOGKFExams.Server.Controllers.IOGKFExamsDb
                 }
                 patch.Patch(item);
 
-                this.OnExamUpdated(item);
-                this.context.Exams.Update(item);
+                this.OnExamSectionUpdated(item);
+                this.context.ExamSections.Update(item);
                 this.context.SaveChanges();
 
-                var itemToReturn = this.context.Exams.Where(i => i.ExamId == key);
-                Request.QueryString = Request.QueryString.Add("$expand", "Country,ExamStatus,Language");
-                this.OnAfterExamUpdated(item);
+                var itemToReturn = this.context.ExamSections.Where(i => i.ExamSectionId == key);
+                
+                this.OnAfterExamSectionUpdated(item);
                 return new ObjectResult(SingleResult.Create(itemToReturn));
             }
             catch(Exception ex)
@@ -159,12 +159,12 @@ namespace IOGKFExams.Server.Controllers.IOGKFExamsDb
             }
         }
 
-        partial void OnExamCreated(IOGKFExams.Server.Models.IOGKFExamsDb.Exam item);
-        partial void OnAfterExamCreated(IOGKFExams.Server.Models.IOGKFExamsDb.Exam item);
+        partial void OnExamSectionCreated(IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection item);
+        partial void OnAfterExamSectionCreated(IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection item);
 
         [HttpPost]
         [EnableQuery(MaxExpansionDepth=10,MaxAnyAllExpressionDepth=10,MaxNodeCount=1000)]
-        public IActionResult Post([FromBody] IOGKFExams.Server.Models.IOGKFExamsDb.Exam item)
+        public IActionResult Post([FromBody] IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection item)
         {
             try
             {
@@ -178,15 +178,15 @@ namespace IOGKFExams.Server.Controllers.IOGKFExamsDb
                     return BadRequest();
                 }
 
-                this.OnExamCreated(item);
-                this.context.Exams.Add(item);
+                this.OnExamSectionCreated(item);
+                this.context.ExamSections.Add(item);
                 this.context.SaveChanges();
 
-                var itemToReturn = this.context.Exams.Where(i => i.ExamId == item.ExamId);
+                var itemToReturn = this.context.ExamSections.Where(i => i.ExamSectionId == item.ExamSectionId);
 
-                Request.QueryString = Request.QueryString.Add("$expand", "Country,ExamStatus,Language");
+                
 
-                this.OnAfterExamCreated(item);
+                this.OnAfterExamSectionCreated(item);
 
                 return new ObjectResult(SingleResult.Create(itemToReturn))
                 {

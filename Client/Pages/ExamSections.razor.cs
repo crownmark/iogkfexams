@@ -10,7 +10,7 @@ using Radzen.Blazor;
 
 namespace IOGKFExams.Client.Pages
 {
-    public partial class ExamTemplateQuestions
+    public partial class ExamSections
     {
         [Inject]
         protected IJSRuntime JSRuntime { get; set; }
@@ -33,17 +33,15 @@ namespace IOGKFExams.Client.Pages
         [Inject]
         public IOGKFExamsDbService IOGKFExamsDbService { get; set; }
 
-        protected IEnumerable<IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplateQuestion> examTemplateQuestions;
+        protected IEnumerable<IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection> examSections;
 
-        protected RadzenDataGrid<IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplateQuestion> grid0;
+        protected RadzenDataGrid<IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection> grid0;
         protected int count;
 
         protected string search = "";
 
         [Inject]
         protected SecurityService Security { get; set; }
-        [Parameter]
-        public int ExamTemplateId { get; set; }
 
         protected async Task Search(ChangeEventArgs args)
         {
@@ -58,40 +56,35 @@ namespace IOGKFExams.Client.Pages
         {
             try
             {
-                gridLoading = true;
-                var result = await IOGKFExamsDbService.GetExamTemplateQuestions(filter: $@"(contains(Question,""{search}"")) and {(string.IsNullOrEmpty(args.Filter)? "true" : args.Filter)} and ExamTemplateId eq {ExamTemplateId}", expand: "ExamTemplate,Language,Rank,ExamSection", orderby: $"{args.OrderBy}", top: args.Top, skip: args.Skip, count:args.Top != null && args.Skip != null);
-                examTemplateQuestions = result.Value.AsODataEnumerable();
+                var result = await IOGKFExamsDbService.GetExamSections(filter: $@"(contains(ExamSectionName,""{search}"")) and {(string.IsNullOrEmpty(args.Filter)? "true" : args.Filter)}", orderby: $"{args.OrderBy}", top: args.Top, skip: args.Skip, count:args.Top != null && args.Skip != null);
+                examSections = result.Value.AsODataEnumerable();
                 count = result.Count;
-                gridLoading = false;
-
             }
             catch (System.Exception ex)
             {
-                gridLoading = false;
-
-                NotificationService.Notify(new NotificationMessage(){ Severity = NotificationSeverity.Error, Summary = $"Error", Detail = $"Unable to load ExamTemplateQuestions" });
+                NotificationService.Notify(new NotificationMessage(){ Severity = NotificationSeverity.Error, Summary = $"Error", Detail = $"Unable to load ExamSections" });
             }
         }
 
         protected async Task AddButtonClick(MouseEventArgs args)
         {
-            await DialogService.OpenAsync<AddExamTemplateQuestion>("Add Template Question", new Dictionary<string, object>() { {"ExamTemplateId", ExamTemplateId} }, new DialogOptions { Width = "80%" });
+            await DialogService.OpenAsync<AddExamSection>("Add ExamSection", options: new DialogOptions { Resizable = false, Draggable = true });
             await grid0.Reload();
         }
 
-        protected async Task EditRow(IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplateQuestion args)
+        protected async Task EditRow(IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection args)
         {
-            await DialogService.OpenAsync<EditExamTemplateQuestion>("Edit TemplateQuestion", new Dictionary<string, object> { {"ExamTemplateQuestionsId", args.ExamTemplateQuestionsId} }, new DialogOptions { Width = "80%" });
+            await DialogService.OpenAsync<EditExamSection>("Edit ExamSection", new Dictionary<string, object> { {"ExamSectionId", args.ExamSectionId} }, new DialogOptions { Resizable = false, Draggable = true });
             await grid0.Reload();
         }
 
-        protected async Task GridDeleteButtonClick(MouseEventArgs args, IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplateQuestion examTemplateQuestion)
+        protected async Task GridDeleteButtonClick(MouseEventArgs args, IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection examSection)
         {
             try
             {
                 if (await DialogService.Confirm("Are you sure you want to delete this record?") == true)
                 {
-                    var deleteResult = await IOGKFExamsDbService.DeleteExamTemplateQuestion(examTemplateQuestionsId:examTemplateQuestion.ExamTemplateQuestionsId);
+                    var deleteResult = await IOGKFExamsDbService.DeleteExamSection(examSectionId:examSection.ExamSectionId);
 
                     if (deleteResult != null)
                     {
@@ -105,7 +98,7 @@ namespace IOGKFExams.Client.Pages
                 {
                     Severity = NotificationSeverity.Error,
                     Summary = $"Error",
-                    Detail = $"Unable to delete ExamTemplateQuestion"
+                    Detail = $"Unable to delete ExamSection"
                 });
             }
         }
@@ -114,43 +107,25 @@ namespace IOGKFExams.Client.Pages
         {
             if (args?.Value == "csv")
             {
-                await IOGKFExamsDbService.ExportExamTemplateQuestionsToCSV(new Query
+                await IOGKFExamsDbService.ExportExamSectionsToCSV(new Query
                 {
                     Filter = $@"{(string.IsNullOrEmpty(grid0.Query.Filter)? "true" : grid0.Query.Filter)}",
                     OrderBy = $"{grid0.Query.OrderBy}",
-                    Expand = "ExamTemplate,Language,Rank",
+                    Expand = "",
                     Select = string.Join(",", grid0.ColumnsCollection.Where(c => c.GetVisible() && !string.IsNullOrEmpty(c.Property)).Select(c => c.Property.Contains(".") ? c.Property + " as " + c.Property.Replace(".", "") : c.Property))
-                }, "ExamTemplateQuestions");
+                }, "ExamSections");
             }
 
             if (args == null || args.Value == "xlsx")
             {
-                await IOGKFExamsDbService.ExportExamTemplateQuestionsToExcel(new Query
+                await IOGKFExamsDbService.ExportExamSectionsToExcel(new Query
                 {
                     Filter = $@"{(string.IsNullOrEmpty(grid0.Query.Filter)? "true" : grid0.Query.Filter)}",
                     OrderBy = $"{grid0.Query.OrderBy}",
-                    Expand = "ExamTemplate,Language,Rank",
+                    Expand = "",
                     Select = string.Join(",", grid0.ColumnsCollection.Where(c => c.GetVisible() && !string.IsNullOrEmpty(c.Property)).Select(c => c.Property.Contains(".") ? c.Property + " as " + c.Property.Replace(".", "") : c.Property))
-                }, "ExamTemplateQuestions");
+                }, "ExamSections");
             }
         }
-
-        protected bool gridLoading { get; set; }
-
-        protected async System.Threading.Tasks.Task RefreshGridButtonClick(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
-        {
-            await grid0.Reload();
-        }
-
-        protected async System.Threading.Tasks.Task RefreshGridButtonMouseEnter(Microsoft.AspNetCore.Components.ElementReference args)
-        {
-            TooltipService.Open(args, "Refresh Data", new TooltipOptions { Position = TooltipPosition.Top });
-        }
-
-        protected async System.Threading.Tasks.Task RefreshGridButtonMouseLeave(Microsoft.AspNetCore.Components.ElementReference args)
-        {
-            TooltipService.Close();
-        }
-
     }
 }

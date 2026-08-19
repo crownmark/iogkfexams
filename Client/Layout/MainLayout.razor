@@ -44,11 +44,13 @@
         <RadzenPanelMenu>
             <RadzenPanelMenuItem Text="@L["PanelMenuItem0.Text"]" Path="" Icon="home" Click="@PanelMenuItemClick" />
             <RadzenPanelMenuItem Path="exams" Text="@L["PanelMenuItem1.Text"]" Icon="quiz" Click="@PanelMenuItemClick"></RadzenPanelMenuItem>
-            <RadzenPanelMenuItem Text="Admin" Icon="shield_person" Expanded="true" >
+            <RadzenPanelMenuItem Text="Admin" Icon="shield_person" Expanded="false" >
                 <RadzenPanelMenuItem Path="countries" Text="Countries" Icon="flag" Click="@PanelMenuItemClick"></RadzenPanelMenuItem>
                 <RadzenPanelMenuItem Path="exam-statuses" Text="Exam Statuses" Icon="lists" Click="@PanelMenuItemClick"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Path="exam-sections" Text="Exam Sections" Icon="quiz"></RadzenPanelMenuItem>
                 <RadzenPanelMenuItem Path="exam-templates" Text="Exam Templates" Icon="quiz" Click="@PanelMenuItemClick"></RadzenPanelMenuItem>
                 <RadzenPanelMenuItem Path="languages" Text="Languages" Icon="language" Click="@PanelMenuItemClick"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Path="notification-templates" Text="Notification Templates" Icon="stacked_email"></RadzenPanelMenuItem>
                 <RadzenPanelMenuItem Path="ranks" Text="Ranks" Icon="editor_choice" Click="@PanelMenuItemClick"></RadzenPanelMenuItem>
             </RadzenPanelMenuItem>
         </RadzenPanelMenu>

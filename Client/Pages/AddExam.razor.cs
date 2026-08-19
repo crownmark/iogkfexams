@@ -83,6 +83,10 @@ namespace IOGKFExams.Client.Pages
 
         protected int countriesCount;
 
+        protected IEnumerable<IOGKFExams.Server.Models.IOGKFExamsDb.Language> languages;
+
+        protected int languagesCount;
+
         protected async Task examTemplatesLoadData(LoadDataArgs args)
         {
             try
@@ -104,7 +108,14 @@ namespace IOGKFExams.Client.Pages
         {
             try
             {
-                creatingExam = true;
+                if (sendExam)
+                {
+
+                }
+                else
+                {
+                    creatingExam = true;
+                }
                 StateHasChanged();
                 exam.CreatedDate = DateTimeOffset.UtcNow;
                 exam.ExamStatusId = 1;
@@ -113,8 +124,9 @@ namespace IOGKFExams.Client.Pages
                 newExam.ExamSessionCode = BatchFunctionsService.GenerateExamSessionCode(newExam.ExamId);
                 await IOGKFExamsDbService.UpdateExam(newExam.ExamId, newExam);
 
-                var template = await IOGKFExamsDbService.GetExamTemplateByExamTemplateId("ExamTemplateQuestions($expand=ExamTemplateAnswers)", selectedTemplate);
-                var response = await BatchFunctionsService.CreateSingleExam(template.ExamTemplateId, newExam.ExamId);
+                //var template = await IOGKFExamsDbService.GetExamTemplateByExamTemplateId("ExamTemplateQuestions($expand=ExamTemplateAnswers)", selectedTemplate);
+                var template = await IOGKFExamsDbService.GetExamTemplateByExamTemplateId("", selectedTemplate);
+                var response = await BatchFunctionsService.CreateSingleExam(template.ExamTemplateId, newExam.ExamId, sendExam);
                 if (response.IsSuccessStatusCode)
                 {
                     NotificationService.Notify(new NotificationMessage() { Severity = NotificationSeverity.Success, Summary = $"Success", Detail = $"Exam Created" });
@@ -150,6 +162,7 @@ namespace IOGKFExams.Client.Pages
                         }
                     }
                     creatingExam = false;
+                    sendExam = false;
                     
                     DialogService.Close(exam);
 
@@ -157,7 +170,7 @@ namespace IOGKFExams.Client.Pages
                 else
                 {
                     creatingExam = false;
-
+                    sendExam = false;
                     errorVisible = true;
                 }
             }
@@ -165,6 +178,7 @@ namespace IOGKFExams.Client.Pages
             {
                 errorVisible = true;
                 creatingExam = false;
+                sendExam = false;
 
             }
         }
@@ -197,6 +211,23 @@ namespace IOGKFExams.Client.Pages
         protected async System.Threading.Tasks.Task CreateAndSendButtonClick(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
         {
             sendExam = true;
+            FormSubmit();
+        }
+
+
+        protected async Task languagesLoadData(LoadDataArgs args)
+        {
+            try
+            {
+                var result = await IOGKFExamsDbService.GetLanguages(new Query { Top = args.Top, Skip = args.Skip, Filter = $"contains(LanguageName, \"{(!string.IsNullOrEmpty(args.Filter) ? args.Filter: "")}\")", OrderBy = args.OrderBy });
+
+                languages = result.Value.AsODataEnumerable();
+                languagesCount = result.Count;
+            }
+            catch (Exception)
+            {
+                NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Error, Summary = "Error", Detail = "Unable to load" });
+            }
         }
     }
 }

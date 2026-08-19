@@ -15,7 +15,7 @@
                     <RadzenSplitButtonItem Text="Excel" Value="xlsx" />
                     <RadzenSplitButtonItem Text="CSV" Value="csv" />
                 </RadzenSplitButton>
-                <RadzenButton Icon="add_circle_outline" Text="Add" Click="@AddButtonClick" Variant="Variant.Flat" />
+                <RadzenButton Icon="add_circle_outline" Text="Add Question" Click="@AddButtonClick" Variant="Variant.Flat" />
             </RadzenStack>
         </RadzenColumn>
     </RadzenRow>
@@ -31,12 +31,9 @@
                                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplateQuestion" Property="Rank.RankName" Title="Rank">
                                 </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplateQuestion" Property="ExamSection.ExamSectionName" Title="Section"></RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplateQuestion" Property="Language.LanguageName" Title="Language">
                                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplateQuestion" Property="ExamTemplateQuestionsId" Title="Exam Template Questions Id" Visible="false">
-                </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplateQuestion" Property="ExamTemplate.ExamTemplateTitle" Title="Exam Template" Visible="false">
-                </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplateQuestion" Filterable="false" Sortable="false" Width="70px" TextAlign="TextAlign.Center">
                     <Template Context="examTemplateQuestion">
 

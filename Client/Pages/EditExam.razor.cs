@@ -35,6 +35,10 @@ namespace IOGKFExams.Client.Pages
         [Parameter]
         public int ExamId { get; set; }
 
+        protected IEnumerable<IOGKFExams.Server.Models.IOGKFExamsDb.Language> languages;
+
+        protected int languagesCount;
+
         protected override async Task OnInitializedAsync()
         {
             exam = await IOGKFExamsDbService.GetExamByExamId(examId:ExamId);
@@ -111,6 +115,21 @@ namespace IOGKFExams.Client.Pages
         }
         protected async System.Threading.Tasks.Task ValidatePhone(System.String args)
         {
+        }
+
+        protected async Task languagesLoadData(LoadDataArgs args)
+        {
+            try
+            {
+                var result = await IOGKFExamsDbService.GetLanguages(new Query { Top = args.Top, Skip = args.Skip, Filter = $"contains(LanguageName, \"{(!string.IsNullOrEmpty(args.Filter) ? args.Filter: "")}\")", OrderBy = args.OrderBy });
+
+                languages = result.Value.AsODataEnumerable();
+                languagesCount = result.Count;
+            }
+            catch (Exception)
+            {
+                NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Error, Summary = "Error", Detail = "Unable to load" });
+            }
         }
     }
 }

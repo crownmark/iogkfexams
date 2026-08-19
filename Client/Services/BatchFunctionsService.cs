@@ -1,4 +1,4 @@
-﻿namespace IOGKFExams.Client
+namespace IOGKFExams.Client
 {
     using System.Net.Http;
     using System.Net.Http.Json;
@@ -34,9 +34,31 @@
                 return 100000 + (positiveHash % 900000);
             }
         }
-        public async Task<HttpResponseMessage> CreateSingleExam(int templateId, int examId)
+        public async Task<HttpResponseMessage> CreateSingleExam(int templateId, int examId, bool sendExam)
         {
-            var uri = new Uri(baseUri, $"BatchFunctions/createsingleexam?templateId={templateId}&examId={examId}");
+            var uri = new Uri(baseUri, $"BatchFunctions/createsingleexam?templateId={templateId}&examId={examId}&sendExam={sendExam}");
+
+            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
+
+            var response = await httpClient.SendAsync(httpRequestMessage);
+
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> SendExamEmail(int examId)
+        {
+            var uri = new Uri(baseUri, $"BatchFunctions/SendExamEmail?examId={examId}");
+
+            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
+
+            var response = await httpClient.SendAsync(httpRequestMessage);
+
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> SendEmailAsync(string to, string subject, string body)
+        {
+            var uri = new Uri(baseUri, $"BatchFunctions/SendEmailAsync/{to}/{subject}/{body}");
 
             var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
 

@@ -41,6 +41,7 @@ namespace IOGKFExams.Client.Pages
         {
             examTemplateQuestion = new IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplateQuestion();
             examTemplateQuestion.ExamTemplateId = ExamTemplateId;
+            examTemplateQuestion.Active = true;
         }
         protected bool errorVisible;
         protected IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplateQuestion examTemplateQuestion;
@@ -113,6 +114,10 @@ namespace IOGKFExams.Client.Pages
         protected SecurityService Security { get; set; }
         [Parameter]
         public int ExamTemplateId { get; set; }
+
+        protected IEnumerable<IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection> examSections;
+
+        protected int examSectionsCount;
         protected async Task ranksForMinimumRankRequiredIdLoadData(LoadDataArgs args)
         {
             try
@@ -223,6 +228,22 @@ namespace IOGKFExams.Client.Pages
                     Summary = "Exception",
                     Detail = ex.Message
                 });
+            }
+        }
+
+
+        protected async Task examSectionsLoadData(LoadDataArgs args)
+        {
+            try
+            {
+                var result = await IOGKFExamsDbService.GetExamSections(new Query { Top = args.Top, Skip = args.Skip, Filter = $"contains(ExamSectionName, \"{(!string.IsNullOrEmpty(args.Filter) ? args.Filter: "")}\")", OrderBy = args.OrderBy });
+
+                examSections = result.Value.AsODataEnumerable();
+                examSectionsCount = result.Count;
+            }
+            catch (Exception)
+            {
+                NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Error, Summary = "Error", Detail = "Unable to load" });
             }
         }
     }

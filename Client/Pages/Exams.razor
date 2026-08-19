@@ -42,16 +42,16 @@
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="ExamGuid" Title="Exam Guid" Visible="false">
                                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Filterable="false" Sortable="false" Width="285px" TextAlign="TextAlign.Center" Frozen="true" FrozenPosition="Radzen.FrozenColumnPosition.Right">
+                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Filterable="false" Sortable="false" Width="180px" TextAlign="Radzen.TextAlign.Left" Frozen="true" FrozenPosition="Radzen.FrozenColumnPosition.Right">
                     <Template Context="exam">
 
                         
-                            <RadzenButton ButtonStyle="Radzen.ButtonStyle.Secondary" Icon="sms" Style="width: 36px" Click="@SendExamSMS" Shade="Radzen.Shade.Light" Variant="Radzen.Variant.Flat" Visible="@(!string.IsNullOrEmpty(exam.StudentMobilePhoneE164))" @onclick:stopPropagation="true" MouseEnter="@SendSMSMouseEnter" MouseLeave="@SendSMSMouseLeave" />
-                            <RadzenButton ButtonStyle="Radzen.ButtonStyle.Secondary" Icon="email" Style="width: 36px" Click="@SendExamEmail" Shade="Radzen.Shade.Light" Variant="Radzen.Variant.Flat" Visible="@(!string.IsNullOrEmpty(exam.StudentEmail))" @onclick:stopPropagation="true" MouseEnter="@SendEmailMouseEnter" MouseLeave="@SendEmailMouseLeave"/>
+                            <RadzenButton ButtonStyle="Radzen.ButtonStyle.Secondary" Icon="chat_paste_go" Style="width: 36px" Click="@((args) => SendExamSMS(args, exam))" Shade="Radzen.Shade.Light" Variant="Radzen.Variant.Flat" Visible="@(!string.IsNullOrEmpty(exam.StudentMobilePhoneE164))" @onclick:stopPropagation="true" MouseEnter="@SendSMSMouseEnter" MouseLeave="@SendSMSMouseLeave" />
+                            <RadzenButton ButtonStyle="Radzen.ButtonStyle.Secondary" Icon="outgoing_mail" Style="width: 36px" Click="@((args) => SendExamEmail(args, exam))" Shade="Radzen.Shade.Light" Variant="Radzen.Variant.Flat" Visible="@(!string.IsNullOrEmpty(exam.StudentEmail))" @onclick:stopPropagation="true" MouseEnter="@SendEmailMouseEnter" MouseLeave="@SendEmailMouseLeave"/>
                             <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Medium"
                             Shade="Shade.Lighter" Variant="Variant.Flat"
                             Click=@(args => GridDeleteButtonClick(args, exam)) @onclick:stopPropagation="true" Style="width: 36px" />
-                            <RadzenButton Text="Take Test" Icon="quiz" Click="@(args => TakeTestButtonClick(args, exam))" @onclick:stopPropagation="true"></RadzenButton>
+                            <RadzenButton Text="" Icon="content_copy" Click="@(args => TakeTestButtonClick(args, exam))" @onclick:stopPropagation="true" Visible="@(Security.IsInRole("Super Admins"))" Style="width: 36px" MouseEnter="@CopyExamUrlMouseEnter" MouseLeave="@CopyExamUrlMouseLeave"></RadzenButton>
                     </Template>
                 </RadzenDataGridColumn>
             </Columns>

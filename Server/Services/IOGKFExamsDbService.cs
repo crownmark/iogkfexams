@@ -413,6 +413,7 @@ namespace IOGKFExams.Server
             var items = Context.ExamQuestions.AsQueryable();
 
             items = items.Include(i => i.Exam);
+            items = items.Include(i => i.ExamSection);
             items = items.Include(i => i.Language);
             items = items.Include(i => i.Rank);
 
@@ -446,6 +447,7 @@ namespace IOGKFExams.Server
                               .Where(i => i.ExamQuestionsId == examquestionsid);
 
             items = items.Include(i => i.Exam);
+            items = items.Include(i => i.ExamSection);
             items = items.Include(i => i.Language);
             items = items.Include(i => i.Rank);
  
@@ -520,6 +522,7 @@ namespace IOGKFExams.Server
 
             Reset();
             examquestion.Exam = null;
+            examquestion.ExamSection = null;
             examquestion.Language = null;
             examquestion.Rank = null;
 
@@ -585,6 +588,7 @@ namespace IOGKFExams.Server
 
             items = items.Include(i => i.Country);
             items = items.Include(i => i.ExamStatus);
+            items = items.Include(i => i.Language);
 
             if (query != null)
             {
@@ -617,6 +621,7 @@ namespace IOGKFExams.Server
 
             items = items.Include(i => i.Country);
             items = items.Include(i => i.ExamStatus);
+            items = items.Include(i => i.Language);
  
             OnGetExamByExamId(ref items);
 
@@ -690,6 +695,7 @@ namespace IOGKFExams.Server
             Reset();
             exam.Country = null;
             exam.ExamStatus = null;
+            exam.Language = null;
 
             Context.Attach(exam).State = EntityState.Modified;
 
@@ -731,6 +737,168 @@ namespace IOGKFExams.Server
             }
 
             OnAfterExamDeleted(itemToDelete);
+
+            return itemToDelete;
+        }
+    
+        public async Task ExportExamSectionsToExcel(Query query = null, string fileName = null)
+        {
+            navigationManager.NavigateTo(query != null ? query.ToUrl($"export/iogkfexamsdb/examsections/excel(fileName='{(!string.IsNullOrEmpty(fileName) ? UrlEncoder.Default.Encode(fileName) : "Export")}')") : $"export/iogkfexamsdb/examsections/excel(fileName='{(!string.IsNullOrEmpty(fileName) ? UrlEncoder.Default.Encode(fileName) : "Export")}')", true);
+        }
+
+        public async Task ExportExamSectionsToCSV(Query query = null, string fileName = null)
+        {
+            navigationManager.NavigateTo(query != null ? query.ToUrl($"export/iogkfexamsdb/examsections/csv(fileName='{(!string.IsNullOrEmpty(fileName) ? UrlEncoder.Default.Encode(fileName) : "Export")}')") : $"export/iogkfexamsdb/examsections/csv(fileName='{(!string.IsNullOrEmpty(fileName) ? UrlEncoder.Default.Encode(fileName) : "Export")}')", true);
+        }
+
+        partial void OnExamSectionsRead(ref IQueryable<IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection> items);
+
+        public async Task<IQueryable<IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection>> GetExamSections(Query query = null)
+        {
+            var items = Context.ExamSections.AsQueryable();
+
+
+            if (query != null)
+            {
+                if (!string.IsNullOrEmpty(query.Expand))
+                {
+                    var propertiesToExpand = query.Expand.Split(',');
+                    foreach(var p in propertiesToExpand)
+                    {
+                        items = items.Include(p.Trim());
+                    }
+                }
+
+                ApplyQuery(ref items, query);
+            }
+
+            OnExamSectionsRead(ref items);
+
+            return await Task.FromResult(items);
+        }
+
+        partial void OnExamSectionGet(IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection item);
+        partial void OnGetExamSectionByExamSectionId(ref IQueryable<IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection> items);
+
+
+        public async Task<IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection> GetExamSectionByExamSectionId(int examsectionid)
+        {
+            var items = Context.ExamSections
+                              .AsNoTracking()
+                              .Where(i => i.ExamSectionId == examsectionid);
+
+ 
+            OnGetExamSectionByExamSectionId(ref items);
+
+            var itemToReturn = items.FirstOrDefault();
+
+            OnExamSectionGet(itemToReturn);
+
+            return await Task.FromResult(itemToReturn);
+        }
+
+        partial void OnExamSectionCreated(IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection item);
+        partial void OnAfterExamSectionCreated(IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection item);
+
+        public async Task<IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection> CreateExamSection(IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection examsection)
+        {
+            OnExamSectionCreated(examsection);
+
+            var existingItem = Context.ExamSections
+                              .Where(i => i.ExamSectionId == examsection.ExamSectionId)
+                              .FirstOrDefault();
+
+            if (existingItem != null)
+            {
+               throw new Exception("Item already available");
+            }            
+
+            try
+            {
+                Context.ExamSections.Add(examsection);
+                Context.SaveChanges();
+            }
+            catch
+            {
+                Context.Entry(examsection).State = EntityState.Detached;
+                throw;
+            }
+
+            OnAfterExamSectionCreated(examsection);
+
+            return examsection;
+        }
+
+        public async Task<IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection> CancelExamSectionChanges(IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection item)
+        {
+            var entityToCancel = Context.Entry(item);
+            if (entityToCancel.State == EntityState.Modified)
+            {
+              entityToCancel.CurrentValues.SetValues(entityToCancel.OriginalValues);
+              entityToCancel.State = EntityState.Unchanged;
+            }
+
+            return item;
+        }
+
+        partial void OnExamSectionUpdated(IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection item);
+        partial void OnAfterExamSectionUpdated(IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection item);
+
+        public async Task<IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection> UpdateExamSection(int examsectionid, IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection examsection)
+        {
+            OnExamSectionUpdated(examsection);
+
+            var itemToUpdate = Context.ExamSections
+                              .Where(i => i.ExamSectionId == examsection.ExamSectionId)
+                              .FirstOrDefault();
+
+            if (itemToUpdate == null)
+            {
+               throw new Exception("Item no longer available");
+            }
+
+            Reset();
+
+            Context.Attach(examsection).State = EntityState.Modified;
+
+            Context.SaveChanges();
+
+            OnAfterExamSectionUpdated(examsection);
+
+            return examsection;
+        }
+
+        partial void OnExamSectionDeleted(IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection item);
+        partial void OnAfterExamSectionDeleted(IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection item);
+
+        public async Task<IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection> DeleteExamSection(int examsectionid)
+        {
+            var itemToDelete = Context.ExamSections
+                              .Where(i => i.ExamSectionId == examsectionid)
+                              .FirstOrDefault();
+
+            if (itemToDelete == null)
+            {
+               throw new Exception("Item no longer available");
+            }
+
+            OnExamSectionDeleted(itemToDelete);
+
+            Reset();
+
+            Context.ExamSections.Remove(itemToDelete);
+
+            try
+            {
+                Context.SaveChanges();
+            }
+            catch
+            {
+                Context.Entry(itemToDelete).State = EntityState.Unchanged;
+                throw;
+            }
+
+            OnAfterExamSectionDeleted(itemToDelete);
 
             return itemToDelete;
         }
@@ -1078,6 +1246,7 @@ namespace IOGKFExams.Server
         {
             var items = Context.ExamTemplateQuestions.AsQueryable();
 
+            items = items.Include(i => i.ExamSection);
             items = items.Include(i => i.ExamTemplate);
             items = items.Include(i => i.Language);
             items = items.Include(i => i.Rank);
@@ -1111,6 +1280,7 @@ namespace IOGKFExams.Server
                               .AsNoTracking()
                               .Where(i => i.ExamTemplateQuestionsId == examtemplatequestionsid);
 
+            items = items.Include(i => i.ExamSection);
             items = items.Include(i => i.ExamTemplate);
             items = items.Include(i => i.Language);
             items = items.Include(i => i.Rank);
@@ -1185,6 +1355,7 @@ namespace IOGKFExams.Server
             }
 
             Reset();
+            examtemplatequestion.ExamSection = null;
             examtemplatequestion.ExamTemplate = null;
             examtemplatequestion.Language = null;
             examtemplatequestion.Rank = null;
@@ -1556,6 +1727,171 @@ namespace IOGKFExams.Server
             }
 
             OnAfterLanguageDeleted(itemToDelete);
+
+            return itemToDelete;
+        }
+    
+        public async Task ExportNotificationTemplatesToExcel(Query query = null, string fileName = null)
+        {
+            navigationManager.NavigateTo(query != null ? query.ToUrl($"export/iogkfexamsdb/notificationtemplates/excel(fileName='{(!string.IsNullOrEmpty(fileName) ? UrlEncoder.Default.Encode(fileName) : "Export")}')") : $"export/iogkfexamsdb/notificationtemplates/excel(fileName='{(!string.IsNullOrEmpty(fileName) ? UrlEncoder.Default.Encode(fileName) : "Export")}')", true);
+        }
+
+        public async Task ExportNotificationTemplatesToCSV(Query query = null, string fileName = null)
+        {
+            navigationManager.NavigateTo(query != null ? query.ToUrl($"export/iogkfexamsdb/notificationtemplates/csv(fileName='{(!string.IsNullOrEmpty(fileName) ? UrlEncoder.Default.Encode(fileName) : "Export")}')") : $"export/iogkfexamsdb/notificationtemplates/csv(fileName='{(!string.IsNullOrEmpty(fileName) ? UrlEncoder.Default.Encode(fileName) : "Export")}')", true);
+        }
+
+        partial void OnNotificationTemplatesRead(ref IQueryable<IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate> items);
+
+        public async Task<IQueryable<IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate>> GetNotificationTemplates(Query query = null)
+        {
+            var items = Context.NotificationTemplates.AsQueryable();
+
+            items = items.Include(i => i.Language);
+
+            if (query != null)
+            {
+                if (!string.IsNullOrEmpty(query.Expand))
+                {
+                    var propertiesToExpand = query.Expand.Split(',');
+                    foreach(var p in propertiesToExpand)
+                    {
+                        items = items.Include(p.Trim());
+                    }
+                }
+
+                ApplyQuery(ref items, query);
+            }
+
+            OnNotificationTemplatesRead(ref items);
+
+            return await Task.FromResult(items);
+        }
+
+        partial void OnNotificationTemplateGet(IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate item);
+        partial void OnGetNotificationTemplateByNotificationTemplateId(ref IQueryable<IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate> items);
+
+
+        public async Task<IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate> GetNotificationTemplateByNotificationTemplateId(int notificationtemplateid)
+        {
+            var items = Context.NotificationTemplates
+                              .AsNoTracking()
+                              .Where(i => i.NotificationTemplateId == notificationtemplateid);
+
+            items = items.Include(i => i.Language);
+ 
+            OnGetNotificationTemplateByNotificationTemplateId(ref items);
+
+            var itemToReturn = items.FirstOrDefault();
+
+            OnNotificationTemplateGet(itemToReturn);
+
+            return await Task.FromResult(itemToReturn);
+        }
+
+        partial void OnNotificationTemplateCreated(IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate item);
+        partial void OnAfterNotificationTemplateCreated(IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate item);
+
+        public async Task<IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate> CreateNotificationTemplate(IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate notificationtemplate)
+        {
+            OnNotificationTemplateCreated(notificationtemplate);
+
+            var existingItem = Context.NotificationTemplates
+                              .Where(i => i.NotificationTemplateId == notificationtemplate.NotificationTemplateId)
+                              .FirstOrDefault();
+
+            if (existingItem != null)
+            {
+               throw new Exception("Item already available");
+            }            
+
+            try
+            {
+                Context.NotificationTemplates.Add(notificationtemplate);
+                Context.SaveChanges();
+            }
+            catch
+            {
+                Context.Entry(notificationtemplate).State = EntityState.Detached;
+                throw;
+            }
+
+            OnAfterNotificationTemplateCreated(notificationtemplate);
+
+            return notificationtemplate;
+        }
+
+        public async Task<IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate> CancelNotificationTemplateChanges(IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate item)
+        {
+            var entityToCancel = Context.Entry(item);
+            if (entityToCancel.State == EntityState.Modified)
+            {
+              entityToCancel.CurrentValues.SetValues(entityToCancel.OriginalValues);
+              entityToCancel.State = EntityState.Unchanged;
+            }
+
+            return item;
+        }
+
+        partial void OnNotificationTemplateUpdated(IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate item);
+        partial void OnAfterNotificationTemplateUpdated(IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate item);
+
+        public async Task<IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate> UpdateNotificationTemplate(int notificationtemplateid, IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate notificationtemplate)
+        {
+            OnNotificationTemplateUpdated(notificationtemplate);
+
+            var itemToUpdate = Context.NotificationTemplates
+                              .Where(i => i.NotificationTemplateId == notificationtemplate.NotificationTemplateId)
+                              .FirstOrDefault();
+
+            if (itemToUpdate == null)
+            {
+               throw new Exception("Item no longer available");
+            }
+
+            Reset();
+            notificationtemplate.Language = null;
+
+            Context.Attach(notificationtemplate).State = EntityState.Modified;
+
+            Context.SaveChanges();
+
+            OnAfterNotificationTemplateUpdated(notificationtemplate);
+
+            return notificationtemplate;
+        }
+
+        partial void OnNotificationTemplateDeleted(IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate item);
+        partial void OnAfterNotificationTemplateDeleted(IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate item);
+
+        public async Task<IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate> DeleteNotificationTemplate(int notificationtemplateid)
+        {
+            var itemToDelete = Context.NotificationTemplates
+                              .Where(i => i.NotificationTemplateId == notificationtemplateid)
+                              .FirstOrDefault();
+
+            if (itemToDelete == null)
+            {
+               throw new Exception("Item no longer available");
+            }
+
+            OnNotificationTemplateDeleted(itemToDelete);
+
+            Reset();
+
+            Context.NotificationTemplates.Remove(itemToDelete);
+
+            try
+            {
+                Context.SaveChanges();
+            }
+            catch
+            {
+                Context.Entry(itemToDelete).State = EntityState.Unchanged;
+                throw;
+            }
+
+            OnAfterNotificationTemplateDeleted(itemToDelete);
 
             return itemToDelete;
         }

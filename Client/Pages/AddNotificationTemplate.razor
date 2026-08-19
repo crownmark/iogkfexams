@@ -1,0 +1,82 @@
+@page "/add-notification-template"
+
+@attribute [Authorize]
+<PageTitle>Add NotificationTemplate</PageTitle>
+    <RadzenColumn SizeMD=12>
+        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">Cannot save NotificationTemplate</RadzenAlert>
+        <RadzenTemplateForm TItem="IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate" Data="@(notificationTemplate)" Visible="@(notificationTemplate != null)" Submit="@FormSubmit">
+          <RadzenStack>
+            <RadzenFormField Text="Language" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenDropDown Data="@(languagesForLanguageId)" TextProperty="LanguageName" ValueProperty="LanguageId" AllowClear=true
+                          style="display: block; width: 100%" @bind-Value="@(notificationTemplate.LanguageId)" Name="LanguageId"
+                         Count=@languagesForLanguageIdCount LoadData=@languagesForLanguageIdLoadData />
+              </ChildContent>
+            </RadzenFormField>
+            <RadzenLabel Text="Click to add Token to Message Subject:" />
+            <RadzenSelectBar TValue="string" Name="Tokens" Change="@TokensChangeSubject" Size="Radzen.ButtonSize.ExtraSmall">
+                <Items>
+                    <RadzenSelectBarItem Text="Student First Name" Value="@("{{StudentFirstName}}")"></RadzenSelectBarItem>
+                    <RadzenSelectBarItem Text="Student Last Name" Value="@("{{StudentLastName}}")"></RadzenSelectBarItem>
+                    <RadzenSelectBarItem Text="Exam Id" Value="@("{{ExamId}}")"></RadzenSelectBarItem>
+                    <RadzenSelectBarItem Text="Exam Session Code" Value="@("{{ExamSessionCode}}")"></RadzenSelectBarItem>
+                    <RadzenSelectBarItem Text="Exam Url" Value="@("{{ExamUrl}}")"></RadzenSelectBarItem>
+                </Items>
+            </RadzenSelectBar>
+            <RadzenFormField Text="Subject" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@(notificationTemplate.Subject)" Name="Subject" AutoCompleteType="AutoCompleteType.Off" MaxLength="500" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="Subject" Text="Subject is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Channel" Variant="Variant.Outlined" AllowFloatingLabel="false">
+                  <ChildContent>
+                    <RadzenSelectBar TValue="string" Name="Channel" Size="Radzen.ButtonSize.Medium" @bind-Value="@notificationTemplate.Channel">
+                      <Items>
+                          <RadzenSelectBarItem Text="Email" Value="@("Email")"></RadzenSelectBarItem>
+                          <RadzenSelectBarItem Text="SMS" Value="@("SMS")"></RadzenSelectBarItem>
+                      </Items>
+                    </RadzenSelectBar>
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="Channel" Text="Channel is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenLabel Text="Click to add Token to Message Body:" />
+            <RadzenSelectBar TValue="string" Name="Tokens" Change="@TokensChange" Size="Radzen.ButtonSize.ExtraSmall">
+                <Items>
+                    <RadzenSelectBarItem Text="Student First Name" Value="@("{{StudentFirstName}}")"></RadzenSelectBarItem>
+                    <RadzenSelectBarItem Text="Student Last Name" Value="@("{{StudentLastName}}")"></RadzenSelectBarItem>
+                    <RadzenSelectBarItem Text="Exam Id" Value="@("{{ExamId}}")"></RadzenSelectBarItem>
+                    <RadzenSelectBarItem Text="Exam Session Code" Value="@("{{ExamSessionCode}}")"></RadzenSelectBarItem>
+                    <RadzenSelectBarItem Text="Exam Url" Value="@("{{ExamUrl}}")"></RadzenSelectBarItem>
+                </Items>
+            </RadzenSelectBar>
+            <RadzenFormField Text="Message Body" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenLabel Text="Please select a Channel first" Component="MessageBody" Visible="@(String.IsNullOrEmpty(notificationTemplate.Channel))" Style="margin: 5px" />
+                    <RadzenHtmlEditor @bind-Value="@notificationTemplate.MessageBody" Name="MessageBody" ShowToolbar="false" Style="height: 300px" Visible="@(notificationTemplate.Channel == "Email")"></RadzenHtmlEditor>
+                    <RadzenTextArea @bind-Value="@notificationTemplate.MessageBody" Name="MessageBody" Style="height: 300px" Visible="@(notificationTemplate.Channel == "SMS")"></RadzenTextArea>
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="MessageBody" Text="MessageBody is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Active" Component="Active" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenCheckBox @bind-Value="@(notificationTemplate.Active)" Name="Active" />
+                </RadzenColumn>
+            </RadzenRow>
+          </RadzenStack>
+          <RadzenStack style="margin-top:1rem;" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                    <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Save" Variant="Variant.Flat" />
+                    <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancel" Variant="Variant.Flat" Click="@CancelButtonClick"  />
+          </RadzenStack>
+        </RadzenTemplateForm>
+    </RadzenColumn>
+

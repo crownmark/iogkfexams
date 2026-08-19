@@ -37,6 +37,13 @@ namespace IOGKFExams.Server.Data
               .OnDelete(DeleteBehavior.ClientNoAction);
 
             builder.Entity<IOGKFExams.Server.Models.IOGKFExamsDb.ExamQuestion>()
+              .HasOne(i => i.ExamSection)
+              .WithMany(i => i.ExamQuestions)
+              .HasForeignKey(i => i.ExamSectionId)
+              .HasPrincipalKey(i => i.ExamSectionId)
+              .OnDelete(DeleteBehavior.ClientNoAction);
+
+            builder.Entity<IOGKFExams.Server.Models.IOGKFExamsDb.ExamQuestion>()
               .HasOne(i => i.Language)
               .WithMany(i => i.ExamQuestions)
               .HasForeignKey(i => i.LanguageId)
@@ -64,11 +71,25 @@ namespace IOGKFExams.Server.Data
               .HasPrincipalKey(i => i.ExamStatusId)
               .OnDelete(DeleteBehavior.ClientNoAction);
 
+            builder.Entity<IOGKFExams.Server.Models.IOGKFExamsDb.Exam>()
+              .HasOne(i => i.Language)
+              .WithMany(i => i.Exams)
+              .HasForeignKey(i => i.LanguageId)
+              .HasPrincipalKey(i => i.LanguageId)
+              .OnDelete(DeleteBehavior.ClientNoAction);
+
             builder.Entity<IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplateAnswer>()
               .HasOne(i => i.ExamTemplateQuestion)
               .WithMany(i => i.ExamTemplateAnswers)
               .HasForeignKey(i => i.ExamTemplateQuestionsId)
               .HasPrincipalKey(i => i.ExamTemplateQuestionsId)
+              .OnDelete(DeleteBehavior.ClientNoAction);
+
+            builder.Entity<IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplateQuestion>()
+              .HasOne(i => i.ExamSection)
+              .WithMany(i => i.ExamTemplateQuestions)
+              .HasForeignKey(i => i.ExamSectionId)
+              .HasPrincipalKey(i => i.ExamSectionId)
               .OnDelete(DeleteBehavior.ClientNoAction);
 
             builder.Entity<IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplateQuestion>()
@@ -99,6 +120,13 @@ namespace IOGKFExams.Server.Data
               .HasPrincipalKey(i => i.LanguageId)
               .OnDelete(DeleteBehavior.ClientNoAction);
 
+            builder.Entity<IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate>()
+              .HasOne(i => i.Language)
+              .WithMany(i => i.NotificationTemplates)
+              .HasForeignKey(i => i.LanguageId)
+              .HasPrincipalKey(i => i.LanguageId)
+              .OnDelete(DeleteBehavior.ClientNoAction);
+
             builder.Entity<IOGKFExams.Server.Models.IOGKFExamsDb.ExamAnswer>()
               .Property(p => p.IsSelectedAnswer)
               .HasDefaultValueSql(@"((0))");
@@ -107,15 +135,31 @@ namespace IOGKFExams.Server.Data
               .Property(p => p.Active)
               .HasDefaultValueSql(@"((1))");
 
+            builder.Entity<IOGKFExams.Server.Models.IOGKFExamsDb.ExamQuestion>()
+              .Property(p => p.ExamSectionId)
+              .HasDefaultValueSql(@"((3))");
+
+            builder.Entity<IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection>()
+              .Property(p => p.Active)
+              .HasDefaultValueSql(@"((1))");
+
             builder.Entity<IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplateQuestion>()
               .Property(p => p.Active)
               .HasDefaultValueSql(@"((1))");
+
+            builder.Entity<IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplateQuestion>()
+              .Property(p => p.ExamSectionId)
+              .HasDefaultValueSql(@"((3))");
 
             builder.Entity<IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplate>()
               .Property(p => p.Active)
               .HasDefaultValueSql(@"((1))");
 
             builder.Entity<IOGKFExams.Server.Models.IOGKFExamsDb.Language>()
+              .Property(p => p.Active)
+              .HasDefaultValueSql(@"((1))");
+
+            builder.Entity<IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate>()
               .Property(p => p.Active)
               .HasDefaultValueSql(@"((1))");
 
@@ -130,6 +174,10 @@ namespace IOGKFExams.Server.Data
             builder.Entity<IOGKFExams.Server.Models.IOGKFExamsDb.Exam>()
               .Property(p => p.CompletedDate)
               .HasColumnType("datetimeoffset");
+
+            builder.Entity<IOGKFExams.Server.Models.IOGKFExamsDb.Exam>()
+              .Property(p => p.ExamGrade)
+              .HasPrecision(5,2);
             this.OnModelBuilding(builder);
         }
 
@@ -141,6 +189,8 @@ namespace IOGKFExams.Server.Data
 
         public DbSet<IOGKFExams.Server.Models.IOGKFExamsDb.Exam> Exams { get; set; }
 
+        public DbSet<IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection> ExamSections { get; set; }
+
         public DbSet<IOGKFExams.Server.Models.IOGKFExamsDb.ExamStatus> ExamStatuses { get; set; }
 
         public DbSet<IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplateAnswer> ExamTemplateAnswers { get; set; }
@@ -150,6 +200,8 @@ namespace IOGKFExams.Server.Data
         public DbSet<IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplate> ExamTemplates { get; set; }
 
         public DbSet<IOGKFExams.Server.Models.IOGKFExamsDb.Language> Languages { get; set; }
+
+        public DbSet<IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate> NotificationTemplates { get; set; }
 
         public DbSet<IOGKFExams.Server.Models.IOGKFExamsDb.Rank> Ranks { get; set; }
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)

@@ -55,6 +55,9 @@ namespace IOGKFExams.Client.Pages
         protected IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplate examTemplatesForExamTemplateIdValue;
         protected int uploadProgress { get; set; }
         protected bool showUploadProgress { get; set; }
+        protected IEnumerable<IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection> examSections;
+
+        protected int examSectionsCount;
         protected async Task examTemplatesForExamTemplateIdLoadData(LoadDataArgs args)
         {
             try
@@ -222,6 +225,21 @@ namespace IOGKFExams.Client.Pages
                 {
 
                 }
+            }
+        }
+
+        protected async Task examSectionsLoadData(LoadDataArgs args)
+        {
+            try
+            {
+                var result = await IOGKFExamsDbService.GetExamSections(new Query { Top = args.Top, Skip = args.Skip, Filter = $"contains(ExamSectionName, \"{(!string.IsNullOrEmpty(args.Filter) ? args.Filter: "")}\")", OrderBy = args.OrderBy });
+
+                examSections = result.Value.AsODataEnumerable();
+                examSectionsCount = result.Count;
+            }
+            catch (Exception)
+            {
+                NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Error, Summary = "Error", Detail = "Unable to load" });
             }
         }
     }

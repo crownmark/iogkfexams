@@ -1,0 +1,48 @@
+@page "/notification-templates"
+
+@attribute [Authorize(Roles="Super Admins")]
+<PageTitle>NotificationTemplates</PageTitle>
+<RadzenStack>
+    <RadzenRow AlignItems="AlignItems.Center">
+        <RadzenColumn Size="12" SizeMD="6">
+            <RadzenText Text="Notification Templates" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="6">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                <RadzenButton Icon="add_circle_outline" Text="Add" Click="@AddButtonClick" Variant="Variant.Flat" />
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenTextBox Placeholder="Search ..." style="display: block; width: 100%" @oninput="@Search" aria-label="Search by all string columns" />
+    <RadzenRow>
+      <RadzenColumn SizeMD=12>
+        <RadzenDataGrid @ref="grid0" ColumnWidth="200px"   AllowFiltering="true"  AllowPaging="true" PagerAlwaysVisible="true"  AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@([5, 10, 20, 30,50,100]) AllowColumnResize="true"
+            Data="@(notificationTemplates)" LoadData="@Grid0LoadData" Count="@count" TItem="IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate" RowSelect="@EditRow">
+            <Columns>
+                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate" Property="NotificationTemplateId" Title="Notification Template Id">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate" Property="Active" Title="Active">
+                                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate" Property="Language.LanguageName" Title="Language">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate" Property="Subject" Title="Subject">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate" Property="MessageBody" Title="Message Body">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate" Property="Channel" Title="Channel">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate" Filterable="false" Sortable="false" Width="70px" TextAlign="TextAlign.Center">
+                    <Template Context="notificationTemplate">
+
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Medium"
+                            Shade="Shade.Lighter" Variant="Variant.Flat"
+                            Click=@(args => GridDeleteButtonClick(args, notificationTemplate)) @onclick:stopPropagation="true" />
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+
+        </RadzenDataGrid>
+
+    </RadzenColumn>
+  </RadzenRow>
+</RadzenStack>

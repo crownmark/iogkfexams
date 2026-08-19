@@ -7,26 +7,24 @@ using System.Text.Json.Serialization;
 
 namespace IOGKFExams.Server.Models.IOGKFExamsDb
 {
-    [Table("Languages", Schema = "dbo")]
-    public partial class Language
+    [Table("ExamSections", Schema = "dbo")]
+    public partial class ExamSection
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int LanguageId { get; set; }
+        public int ExamSectionId { get; set; }
 
+        [Required]
         [MaxLength(255)]
-        public string LanguageName { get; set; }
+        public string ExamSectionName { get; set; }
 
         public bool Active { get; set; }
 
+        [Required]
+        public int LanguageId { get; set; }
+
         public ICollection<ExamQuestion> ExamQuestions { get; set; }
 
-        public ICollection<Exam> Exams { get; set; }
-
         public ICollection<ExamTemplateQuestion> ExamTemplateQuestions { get; set; }
-
-        public ICollection<ExamTemplate> ExamTemplates { get; set; }
-
-        public ICollection<NotificationTemplate> NotificationTemplates { get; set; }
     }
 }

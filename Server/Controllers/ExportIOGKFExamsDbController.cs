@@ -75,6 +75,20 @@ namespace IOGKFExams.Server.Controllers
             return ToExcel(ApplyQuery(await service.GetExams(), Request.Query, false), fileName);
         }
 
+        [HttpGet("/export/IOGKFExamsDb/examsections/csv")]
+        [HttpGet("/export/IOGKFExamsDb/examsections/csv(fileName='{fileName}')")]
+        public async Task<FileStreamResult> ExportExamSectionsToCSV(string fileName = null)
+        {
+            return ToCSV(ApplyQuery(await service.GetExamSections(), Request.Query, false), fileName);
+        }
+
+        [HttpGet("/export/IOGKFExamsDb/examsections/excel")]
+        [HttpGet("/export/IOGKFExamsDb/examsections/excel(fileName='{fileName}')")]
+        public async Task<FileStreamResult> ExportExamSectionsToExcel(string fileName = null)
+        {
+            return ToExcel(ApplyQuery(await service.GetExamSections(), Request.Query, false), fileName);
+        }
+
         [HttpGet("/export/IOGKFExamsDb/examstatuses/csv")]
         [HttpGet("/export/IOGKFExamsDb/examstatuses/csv(fileName='{fileName}')")]
         public async Task<FileStreamResult> ExportExamStatusesToCSV(string fileName = null)
@@ -143,6 +157,20 @@ namespace IOGKFExams.Server.Controllers
         public async Task<FileStreamResult> ExportLanguagesToExcel(string fileName = null)
         {
             return ToExcel(ApplyQuery(await service.GetLanguages(), Request.Query, false), fileName);
+        }
+
+        [HttpGet("/export/IOGKFExamsDb/notificationtemplates/csv")]
+        [HttpGet("/export/IOGKFExamsDb/notificationtemplates/csv(fileName='{fileName}')")]
+        public async Task<FileStreamResult> ExportNotificationTemplatesToCSV(string fileName = null)
+        {
+            return ToCSV(ApplyQuery(await service.GetNotificationTemplates(), Request.Query, false), fileName);
+        }
+
+        [HttpGet("/export/IOGKFExamsDb/notificationtemplates/excel")]
+        [HttpGet("/export/IOGKFExamsDb/notificationtemplates/excel(fileName='{fileName}')")]
+        public async Task<FileStreamResult> ExportNotificationTemplatesToExcel(string fileName = null)
+        {
+            return ToExcel(ApplyQuery(await service.GetNotificationTemplates(), Request.Query, false), fileName);
         }
 
         [HttpGet("/export/IOGKFExamsDb/ranks/csv")]

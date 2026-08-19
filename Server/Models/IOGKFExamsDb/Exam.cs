@@ -50,6 +50,10 @@ namespace IOGKFExams.Server.Models.IOGKFExamsDb
         [MaxLength(20)]
         public string StudentMobilePhoneE164 { get; set; }
 
+        public int? LanguageId { get; set; }
+
+        public Language Language { get; set; }
+
         public ICollection<ExamQuestion> ExamQuestions { get; set; }
     }
 }

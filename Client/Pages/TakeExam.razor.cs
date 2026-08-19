@@ -86,15 +86,15 @@ namespace IOGKFExams.Client.Pages
                     if(item.ExamAnswerId == answer.ExamAnswerId)
                     {
                         await IOGKFExamsDbService.UpdateExamAnswer(answer.ExamAnswerId, answer);
-
                     }
                     else
                     {
                         item.IsSelectedAnswer = false;
                         await IOGKFExamsDbService.UpdateExamAnswer(item.ExamAnswerId, item);
-
                     }
                 }
+                exam.ExamStatusId = 2;
+                await IOGKFExamsDbService.UpdateExam(exam.ExamId, exam);
                 if (AllowCompletingExam())
                 {
                     allowSave = true;

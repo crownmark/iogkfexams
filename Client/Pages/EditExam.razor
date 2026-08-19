@@ -58,6 +58,14 @@
                       <RadzenNumericRangeValidator Text="Required" Component="CountryId" Min="1"></RadzenNumericRangeValidator>
                   </Helper>
             </RadzenFormField>
+            <RadzenFormField Text="Language" Variant="Variant.Outlined" Visible="true" Component="LanguageId">
+                  <ChildContent>
+                      <RadzenDropDown TValue="int?" @bind-Value="@(exam.LanguageId)" Name="LanguageId" ValueProperty="LanguageId" TextProperty="LanguageName" Data="@languages" LoadData="@languagesLoadData" Count="@languagesCount"/>
+              </ChildContent>
+                  <Helper>
+                      <RadzenRequiredValidator Text="Required" Component="LanguageId" ></RadzenRequiredValidator>
+                  </Helper>
+            </RadzenFormField>
             <RadzenFormField Text="Exam Status" Variant="Variant.Outlined" Visible="false">
                   <ChildContent>
                     <RadzenDropDownDataGrid Data="@(examStatusesForExamStatusId)" TextProperty="Title" ValueProperty="ExamStatusId" AllowClear=true

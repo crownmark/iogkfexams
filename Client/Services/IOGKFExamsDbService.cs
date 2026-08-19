@@ -407,6 +407,100 @@ namespace IOGKFExams.Client
             return await httpClient.SendAsync(httpRequestMessage);
         }
 
+        public async System.Threading.Tasks.Task ExportExamSectionsToExcel(Query query = null, string fileName = null)
+        {
+            navigationManager.NavigateTo(query != null ? query.ToUrl($"export/iogkfexamsdb/examsections/excel(fileName='{(!string.IsNullOrEmpty(fileName) ? UrlEncoder.Default.Encode(fileName) : "Export")}')") : $"export/iogkfexamsdb/examsections/excel(fileName='{(!string.IsNullOrEmpty(fileName) ? UrlEncoder.Default.Encode(fileName) : "Export")}')", true);
+        }
+
+        public async System.Threading.Tasks.Task ExportExamSectionsToCSV(Query query = null, string fileName = null)
+        {
+            navigationManager.NavigateTo(query != null ? query.ToUrl($"export/iogkfexamsdb/examsections/csv(fileName='{(!string.IsNullOrEmpty(fileName) ? UrlEncoder.Default.Encode(fileName) : "Export")}')") : $"export/iogkfexamsdb/examsections/csv(fileName='{(!string.IsNullOrEmpty(fileName) ? UrlEncoder.Default.Encode(fileName) : "Export")}')", true);
+        }
+
+        partial void OnGetExamSections(HttpRequestMessage requestMessage);
+
+        public async Task<Radzen.ODataServiceResult<IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection>> GetExamSections(Query query)
+        {
+            return await GetExamSections(filter:$"{query.Filter}", orderby:$"{query.OrderBy}", top:query.Top, skip:query.Skip, count:query.Top != null && query.Skip != null);
+        }
+
+        public async Task<Radzen.ODataServiceResult<IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection>> GetExamSections(string filter = default(string), string orderby = default(string), string expand = default(string), int? top = default(int?), int? skip = default(int?), bool? count = default(bool?), string format = default(string), string select = default(string), string apply = default(string))
+        {
+            var uri = new Uri(baseUri, $"ExamSections");
+            uri = Radzen.ODataExtensions.GetODataUri(uri: uri, filter:filter, top:top, skip:skip, orderby:orderby, expand:expand, select:select, count:count, apply:apply);
+
+            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
+
+            OnGetExamSections(httpRequestMessage);
+
+            var response = await httpClient.SendAsync(httpRequestMessage);
+
+            return await Radzen.HttpResponseMessageExtensions.ReadAsync<Radzen.ODataServiceResult<IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection>>(response);
+        }
+
+        partial void OnCreateExamSection(HttpRequestMessage requestMessage);
+
+        public async Task<IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection> CreateExamSection(IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection examSection = default(IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection))
+        {
+            var uri = new Uri(baseUri, $"ExamSections");
+
+            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, uri);
+
+            httpRequestMessage.Content = new StringContent(Radzen.ODataJsonSerializer.Serialize(examSection), Encoding.UTF8, "application/json");
+
+            OnCreateExamSection(httpRequestMessage);
+
+            var response = await httpClient.SendAsync(httpRequestMessage);
+
+            return await Radzen.HttpResponseMessageExtensions.ReadAsync<IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection>(response);
+        }
+
+        partial void OnDeleteExamSection(HttpRequestMessage requestMessage);
+
+        public async Task<HttpResponseMessage> DeleteExamSection(int examSectionId = default(int))
+        {
+            var uri = new Uri(baseUri, $"ExamSections({examSectionId})");
+
+            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, uri);
+
+            OnDeleteExamSection(httpRequestMessage);
+
+            return await httpClient.SendAsync(httpRequestMessage);
+        }
+
+        partial void OnGetExamSectionByExamSectionId(HttpRequestMessage requestMessage);
+
+        public async Task<IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection> GetExamSectionByExamSectionId(string expand = default(string), int examSectionId = default(int))
+        {
+            var uri = new Uri(baseUri, $"ExamSections({examSectionId})");
+
+            uri = Radzen.ODataExtensions.GetODataUri(uri: uri, filter:null, top:null, skip:null, orderby:null, expand:expand, select:null, count:null);
+
+            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
+
+            OnGetExamSectionByExamSectionId(httpRequestMessage);
+
+            var response = await httpClient.SendAsync(httpRequestMessage);
+
+            return await Radzen.HttpResponseMessageExtensions.ReadAsync<IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection>(response);
+        }
+
+        partial void OnUpdateExamSection(HttpRequestMessage requestMessage);
+        
+        public async Task<HttpResponseMessage> UpdateExamSection(int examSectionId = default(int), IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection examSection = default(IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection))
+        {
+            var uri = new Uri(baseUri, $"ExamSections({examSectionId})");
+
+            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Patch, uri);
+
+
+            httpRequestMessage.Content = new StringContent(Radzen.ODataJsonSerializer.Serialize(examSection), Encoding.UTF8, "application/json");
+
+            OnUpdateExamSection(httpRequestMessage);
+
+            return await httpClient.SendAsync(httpRequestMessage);
+        }
+
         public async System.Threading.Tasks.Task ExportExamStatusesToExcel(Query query = null, string fileName = null)
         {
             navigationManager.NavigateTo(query != null ? query.ToUrl($"export/iogkfexamsdb/examstatuses/excel(fileName='{(!string.IsNullOrEmpty(fileName) ? UrlEncoder.Default.Encode(fileName) : "Export")}')") : $"export/iogkfexamsdb/examstatuses/excel(fileName='{(!string.IsNullOrEmpty(fileName) ? UrlEncoder.Default.Encode(fileName) : "Export")}')", true);
@@ -873,6 +967,100 @@ namespace IOGKFExams.Client
             httpRequestMessage.Content = new StringContent(Radzen.ODataJsonSerializer.Serialize(language), Encoding.UTF8, "application/json");
 
             OnUpdateLanguage(httpRequestMessage);
+
+            return await httpClient.SendAsync(httpRequestMessage);
+        }
+
+        public async System.Threading.Tasks.Task ExportNotificationTemplatesToExcel(Query query = null, string fileName = null)
+        {
+            navigationManager.NavigateTo(query != null ? query.ToUrl($"export/iogkfexamsdb/notificationtemplates/excel(fileName='{(!string.IsNullOrEmpty(fileName) ? UrlEncoder.Default.Encode(fileName) : "Export")}')") : $"export/iogkfexamsdb/notificationtemplates/excel(fileName='{(!string.IsNullOrEmpty(fileName) ? UrlEncoder.Default.Encode(fileName) : "Export")}')", true);
+        }
+
+        public async System.Threading.Tasks.Task ExportNotificationTemplatesToCSV(Query query = null, string fileName = null)
+        {
+            navigationManager.NavigateTo(query != null ? query.ToUrl($"export/iogkfexamsdb/notificationtemplates/csv(fileName='{(!string.IsNullOrEmpty(fileName) ? UrlEncoder.Default.Encode(fileName) : "Export")}')") : $"export/iogkfexamsdb/notificationtemplates/csv(fileName='{(!string.IsNullOrEmpty(fileName) ? UrlEncoder.Default.Encode(fileName) : "Export")}')", true);
+        }
+
+        partial void OnGetNotificationTemplates(HttpRequestMessage requestMessage);
+
+        public async Task<Radzen.ODataServiceResult<IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate>> GetNotificationTemplates(Query query)
+        {
+            return await GetNotificationTemplates(filter:$"{query.Filter}", orderby:$"{query.OrderBy}", top:query.Top, skip:query.Skip, count:query.Top != null && query.Skip != null);
+        }
+
+        public async Task<Radzen.ODataServiceResult<IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate>> GetNotificationTemplates(string filter = default(string), string orderby = default(string), string expand = default(string), int? top = default(int?), int? skip = default(int?), bool? count = default(bool?), string format = default(string), string select = default(string), string apply = default(string))
+        {
+            var uri = new Uri(baseUri, $"NotificationTemplates");
+            uri = Radzen.ODataExtensions.GetODataUri(uri: uri, filter:filter, top:top, skip:skip, orderby:orderby, expand:expand, select:select, count:count, apply:apply);
+
+            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
+
+            OnGetNotificationTemplates(httpRequestMessage);
+
+            var response = await httpClient.SendAsync(httpRequestMessage);
+
+            return await Radzen.HttpResponseMessageExtensions.ReadAsync<Radzen.ODataServiceResult<IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate>>(response);
+        }
+
+        partial void OnCreateNotificationTemplate(HttpRequestMessage requestMessage);
+
+        public async Task<IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate> CreateNotificationTemplate(IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate notificationTemplate = default(IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate))
+        {
+            var uri = new Uri(baseUri, $"NotificationTemplates");
+
+            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, uri);
+
+            httpRequestMessage.Content = new StringContent(Radzen.ODataJsonSerializer.Serialize(notificationTemplate), Encoding.UTF8, "application/json");
+
+            OnCreateNotificationTemplate(httpRequestMessage);
+
+            var response = await httpClient.SendAsync(httpRequestMessage);
+
+            return await Radzen.HttpResponseMessageExtensions.ReadAsync<IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate>(response);
+        }
+
+        partial void OnDeleteNotificationTemplate(HttpRequestMessage requestMessage);
+
+        public async Task<HttpResponseMessage> DeleteNotificationTemplate(int notificationTemplateId = default(int))
+        {
+            var uri = new Uri(baseUri, $"NotificationTemplates({notificationTemplateId})");
+
+            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, uri);
+
+            OnDeleteNotificationTemplate(httpRequestMessage);
+
+            return await httpClient.SendAsync(httpRequestMessage);
+        }
+
+        partial void OnGetNotificationTemplateByNotificationTemplateId(HttpRequestMessage requestMessage);
+
+        public async Task<IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate> GetNotificationTemplateByNotificationTemplateId(string expand = default(string), int notificationTemplateId = default(int))
+        {
+            var uri = new Uri(baseUri, $"NotificationTemplates({notificationTemplateId})");
+
+            uri = Radzen.ODataExtensions.GetODataUri(uri: uri, filter:null, top:null, skip:null, orderby:null, expand:expand, select:null, count:null);
+
+            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
+
+            OnGetNotificationTemplateByNotificationTemplateId(httpRequestMessage);
+
+            var response = await httpClient.SendAsync(httpRequestMessage);
+
+            return await Radzen.HttpResponseMessageExtensions.ReadAsync<IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate>(response);
+        }
+
+        partial void OnUpdateNotificationTemplate(HttpRequestMessage requestMessage);
+        
+        public async Task<HttpResponseMessage> UpdateNotificationTemplate(int notificationTemplateId = default(int), IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate notificationTemplate = default(IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate))
+        {
+            var uri = new Uri(baseUri, $"NotificationTemplates({notificationTemplateId})");
+
+            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Patch, uri);
+
+
+            httpRequestMessage.Content = new StringContent(Radzen.ODataJsonSerializer.Serialize(notificationTemplate), Encoding.UTF8, "application/json");
+
+            OnUpdateNotificationTemplate(httpRequestMessage);
 
             return await httpClient.SendAsync(httpRequestMessage);
         }

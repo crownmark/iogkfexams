@@ -36,11 +36,13 @@ builder.Services.AddControllers().AddOData(opt =>
     oDataBuilderIOGKFExamsDb.EntitySet<IOGKFExams.Server.Models.IOGKFExamsDb.ExamAnswer>("ExamAnswers");
     oDataBuilderIOGKFExamsDb.EntitySet<IOGKFExams.Server.Models.IOGKFExamsDb.ExamQuestion>("ExamQuestions");
     oDataBuilderIOGKFExamsDb.EntitySet<IOGKFExams.Server.Models.IOGKFExamsDb.Exam>("Exams");
+    oDataBuilderIOGKFExamsDb.EntitySet<IOGKFExams.Server.Models.IOGKFExamsDb.ExamSection>("ExamSections");
     oDataBuilderIOGKFExamsDb.EntitySet<IOGKFExams.Server.Models.IOGKFExamsDb.ExamStatus>("ExamStatuses");
     oDataBuilderIOGKFExamsDb.EntitySet<IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplateAnswer>("ExamTemplateAnswers");
     oDataBuilderIOGKFExamsDb.EntitySet<IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplateQuestion>("ExamTemplateQuestions");
     oDataBuilderIOGKFExamsDb.EntitySet<IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplate>("ExamTemplates");
     oDataBuilderIOGKFExamsDb.EntitySet<IOGKFExams.Server.Models.IOGKFExamsDb.Language>("Languages");
+    oDataBuilderIOGKFExamsDb.EntitySet<IOGKFExams.Server.Models.IOGKFExamsDb.NotificationTemplate>("NotificationTemplates");
     oDataBuilderIOGKFExamsDb.EntitySet<IOGKFExams.Server.Models.IOGKFExamsDb.Rank>("Ranks");
     opt.AddRouteComponents("odata/IOGKFExamsDb", oDataBuilderIOGKFExamsDb.GetEdmModel()).Count().Filter().OrderBy().Expand().Select().SetMaxTop(null).TimeZone = TimeZoneInfo.Utc;
 });

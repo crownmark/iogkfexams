@@ -14,6 +14,9 @@
                           style="display: block; width: 100%" @bind-Value="@(examTemplateQuestion.ExamTemplateId)" Name="ExamTemplateId"
                         SelectedValue=@examTemplatesForExamTemplateIdValue Count=@examTemplatesForExamTemplateIdCount LoadData=@examTemplatesForExamTemplateIdLoadData />
               </ChildContent>
+              <Helper>
+                    <RadzenNumericRangeValidator Min="1"  Component="ExamTemplateId" Text="Exam Template is required" />
+                  </Helper>
             </RadzenFormField>
             <RadzenFormField Text="Language" Variant="Variant.Outlined">
                   <ChildContent>
@@ -21,6 +24,9 @@
                           style="display: block; width: 100%" @bind-Value="@(examTemplateQuestion.LanguageId)" Name="LanguageId"
                         SelectedValue=@languagesForLanguageIdValue Count=@languagesForLanguageIdCount LoadData=@languagesForLanguageIdLoadData />
               </ChildContent>
+              <Helper>
+                    <RadzenNumericRangeValidator Min="1" Component="LanguageId" Text="Language is required" />
+                  </Helper>
             </RadzenFormField>
             <RadzenFormField Text="Question" Variant="Variant.Outlined">
                   <ChildContent>
@@ -48,6 +54,17 @@
                           style="display: block; width: 100%" @bind-Value="@(examTemplateQuestion.MinimumRankRequiredId)" Name="MinimumRankRequiredId"
                         SelectedValue=@ranksForMinimumRankRequiredIdValue Count=@ranksForMinimumRankRequiredIdCount LoadData=@ranksForMinimumRankRequiredIdLoadData />
               </ChildContent>
+              <Helper>
+                    <RadzenNumericRangeValidator Min="1"  Component="MinimumRankRequiredId" Text="Minimum Rank is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Section" Component="ExamSectionId">
+            <ChildContent>
+                <RadzenDropDown TValue="int" ValueProperty="ExamSectionId" TextProperty="ExamSectionName" Data="@examSections" LoadData="@examSectionsLoadData" Count="@examSectionsCount" Name="ExamSectionId" @bind-Value="@examTemplateQuestion.ExamSectionId" />
+            </ChildContent>
+            <Helper>
+                    <RadzenNumericRangeValidator Min="1"  Component="ExamSectionId" Text="Section is required" />
+                  </Helper>
             </RadzenFormField>
             <RadzenRow style="margin-bottom: 1rem">
                 <RadzenColumn SizeMD="3">

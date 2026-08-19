@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.OData.Query;
 using IOGKFExams.Server.Models;
@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Radzen;
 using System.Text;
 using System.Security.Cryptography;
+using IOGKFExams.Server.Helpers;
 
 namespace IOGKFExams.Server.Controllers
 {
@@ -17,11 +18,14 @@ namespace IOGKFExams.Server.Controllers
         private readonly IOGKFExamsDbContext context;
         private readonly IHttpContextAccessor httpContextAccessor;
         private string baseUrl;
+        private readonly IConfiguration configuration;
 
-        public BatchFunctionsController(IWebHostEnvironment environment, IOGKFExamsDbContext context, IHttpContextAccessor httpContextAccessor)
+
+        public BatchFunctionsController(IWebHostEnvironment environment, IOGKFExamsDbContext context, IHttpContextAccessor httpContextAccessor,IConfiguration configuration)
         {
             this.environment = environment;
             this.context = context;
+            this.configuration = configuration;
             this.httpContextAccessor = httpContextAccessor;
             var request = httpContextAccessor.HttpContext?.Request;
             if (request != null)
@@ -45,8 +49,66 @@ namespace IOGKFExams.Server.Controllers
             }
         }
 
+        [HttpGet("BatchFunctions/SendExamEmail")]
+        public async Task<IActionResult> SendExamEmail([FromQuery] int examId)
+        {
+            try
+            {
+                var exam = context.Exams.Find(examId);
+                if (exam != null)
+                {
+                    // Send Email Message to Student
+                    if (!string.IsNullOrEmpty(exam.StudentEmail))
+                    {
+                        try
+                        {
+                            var notificationTemplate = context.NotificationTemplates.Where(x => x.LanguageId == exam.LanguageId && x.Active == true && x.Channel == "Email").FirstOrDefault();
+                            if (notificationTemplate != null)
+                            {
+
+                                var tokens = new Dictionary<string, string>
+                                {
+                                    { "StudentFirstName", exam.StudentFirstName },
+                                    { "StudentLastName", exam.StudentLastName },
+                                    { "ExamId", exam.ExamId.ToString() },
+                                    { "ExamSessionCode", exam.ExamSessionCode.ToString() },
+                                    { "ExamUrl", $"https://demoapp.crown.software/take-exam/{exam.ExamGuid}" }
+                                };
+                                var updatedNotificationTemplate = TokenReplacementHelper.ReplaceTokens(notificationTemplate, tokens);
+                                // Send Email Logic Here    
+                                await SendEmailAsync(exam.StudentEmail, updatedNotificationTemplate.Subject, updatedNotificationTemplate.MessageBody);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            return StatusCode(500, $"Error sending email to {exam.StudentEmail} for Exam with ID: {examId}.  Error: {ex.Message}");
+
+                        }
+
+                    }
+                    else
+                    {
+                        return StatusCode(500, $"Student Email is empty for Exam with ID: {examId}");
+                    }
+                }
+                else
+                {
+                    return StatusCode(500, $"Unable to Find Exam with ID: {examId}");
+                }
+
+                return Ok();
+
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500, ex.Message);
+
+            }
+        }
+
         [HttpGet("BatchFunctions/createsingleexam")]
-        public async Task<IActionResult> CreateSingleExam([FromQuery] int templateId, [FromQuery] int examId)
+        public async Task<IActionResult> CreateSingleExam([FromQuery] int templateId, [FromQuery] int examId, [FromQuery] bool sendExam)
         {
             try
             {
@@ -68,7 +130,7 @@ namespace IOGKFExams.Server.Controllers
                         });
                         await context.SaveChangesAsync();
                         var answers = await context.ExamTemplateAnswers.Where(x => x.ExamTemplateQuestionsId == question.ExamTemplateQuestionsId).ToListAsync();
-                        foreach(var answer in answers)
+                        foreach (var answer in answers)
                         {
                             await context.ExamAnswers.AddAsync(new ExamAnswer()
                             {
@@ -76,10 +138,66 @@ namespace IOGKFExams.Server.Controllers
                                 IsCorrectAnswer = answer.IsCorrectAnswer,
                                 IsSelectedAnswer = false,
                                 ExamQuestionsId = newQuestion.Entity.ExamQuestionsId,
-                                
+
                             });
                         }
                         await context.SaveChangesAsync();
+                    }
+
+                    // Send Email Message to Student
+                    if (!string.IsNullOrEmpty(exam.StudentEmail))
+                    {
+                        try
+                        {
+                            var notificationTemplate = context.NotificationTemplates.Where(x => x.LanguageId == exam.LanguageId && x.Active == true && x.Channel == "Email").FirstOrDefault();
+                            if (notificationTemplate != null)
+                            {
+
+                                var tokens = new Dictionary<string, string>
+                                {
+                                    { "StudentFirstName", exam.StudentFirstName },
+                                    { "StudentLastName", exam.StudentLastName },
+                                    { "ExamId", exam.ExamId.ToString() },
+                                    { "ExamSessionCode", exam.ExamSessionCode.ToString() },
+                                    { "ExamUrl", $"https://demoapp.crown.software/take-exam/{exam.ExamGuid}" }
+                                };
+                                var updatedNotificationTemplate = TokenReplacementHelper.ReplaceTokens(notificationTemplate, tokens);
+                                // Send Email Logic Here    
+                                await SendEmailAsync(exam.StudentEmail, updatedNotificationTemplate.Subject, updatedNotificationTemplate.MessageBody);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            
+                        }
+
+                    }
+                    // Send SMS Message to Student    
+                    if (!string.IsNullOrEmpty(exam.StudentMobilePhoneE164))
+                    {
+                        try
+                        {
+                            var notificationTemplate = context.NotificationTemplates.Where(x => x.LanguageId == exam.LanguageId && x.Active == true && x.Channel == "SMS").FirstOrDefault();
+                            if (notificationTemplate != null)
+                            {
+
+                                var tokens = new Dictionary<string, string>
+                                {
+                                    { "StudentFirstName", exam.StudentFirstName },
+                                    { "StudentLastName", exam.StudentLastName },
+                                    { "ExamId", exam.ExamId.ToString() },
+                                    { "ExamSessionCode", exam.ExamSessionCode.ToString() },
+                                    { "ExamUrl", $"https://demoapp.crown.software/take-exam/{exam.ExamGuid}" }
+                                };
+                                var updatedNotificationTemplate = TokenReplacementHelper.ReplaceTokens(notificationTemplate, tokens);
+                                // Send SMS Logic Here   
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
+
                     }
                 }
                 else
@@ -93,6 +211,29 @@ namespace IOGKFExams.Server.Controllers
 
                 return StatusCode(500, ex.Message);
             }
+        }
+        [HttpGet("BatchFunctions/SendEmailAsync/{to}/{subject}/{body}")]
+        public async Task SendEmailAsync(string to, string subject, string body)
+        {
+
+            var mailMessage = new System.Net.Mail.MailMessage();
+            mailMessage.From = new System.Net.Mail.MailAddress(configuration.GetValue<string>("Smtp:User"));
+            mailMessage.Body = body;
+            mailMessage.Subject = subject;
+            mailMessage.BodyEncoding = System.Text.Encoding.UTF8;
+            mailMessage.SubjectEncoding = System.Text.Encoding.UTF8;
+            mailMessage.IsBodyHtml = true;
+            mailMessage.To.Add(to);
+
+            var client = new System.Net.Mail.SmtpClient(configuration.GetValue<string>("Smtp:Host"))
+            {
+                UseDefaultCredentials = false,
+                EnableSsl = configuration.GetValue<bool>("Smtp:Ssl"),
+                Port = configuration.GetValue<int>("Smtp:Port"),
+                Credentials = new System.Net.NetworkCredential(configuration.GetValue<string>("Smtp:User"), configuration.GetValue<string>("Smtp:Password"))
+            };
+
+            await client.SendMailAsync(mailMessage);
         }
     }
 }

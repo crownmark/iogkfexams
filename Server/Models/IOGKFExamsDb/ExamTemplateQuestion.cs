@@ -38,6 +38,10 @@ namespace IOGKFExams.Server.Models.IOGKFExamsDb
         [MaxLength(255)]
         public string QuestionImageUrl { get; set; }
 
+        public int ExamSectionId { get; set; }
+
+        public ExamSection ExamSection { get; set; }
+
         public ICollection<ExamTemplateAnswer> ExamTemplateAnswers { get; set; }
     }
 }

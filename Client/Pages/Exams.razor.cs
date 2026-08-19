@@ -31,6 +31,9 @@ namespace IOGKFExams.Client.Pages
         protected NotificationService NotificationService { get; set; }
 
         [Inject]
+        protected BatchFunctionsService BatchFunctionsService { get; set; }
+
+        [Inject]
         public IOGKFExamsDbService IOGKFExamsDbService { get; set; }
 
         protected IEnumerable<IOGKFExams.Server.Models.IOGKFExamsDb.Exam> exams;
@@ -75,7 +78,7 @@ namespace IOGKFExams.Client.Pages
 
         protected async Task AddButtonClick(MouseEventArgs args)
         {
-            await DialogService.OpenAsync<AddExam>("Add Exam", null);
+            await DialogService.OpenAsync<AddExam>("Create Exam", null);
             await grid0.Reload();
         }
 
@@ -91,8 +94,38 @@ namespace IOGKFExams.Client.Pages
             {
                 if (await DialogService.Confirm("Are you sure you want to delete this record?") == true)
                 {
-                    var deleteResult = await IOGKFExamsDbService.DeleteExam(examId:exam.ExamId);
+                    DialogService.OpenAsync("", ds =>
+                    {
+                        RenderFragment content = dialogContent =>
+                        {
+                            dialogContent.OpenComponent<RadzenRow>(0);
+                            dialogContent.AddComponentParameter(1, nameof(RadzenRow.ChildContent), (RenderFragment)(rowContent =>
+                            {
+                                rowContent.OpenComponent<RadzenColumn>(0);
+                                rowContent.AddComponentParameter(1, nameof(RadzenColumn.Size), 12);
+                                rowContent.AddComponentParameter(2, nameof(RadzenRow.ChildContent), (RenderFragment)(columnContent =>
+                                {
+                                    columnContent.AddContent(0, "Deleting exam.  This will take a moment.  Please wait...");
+                                }));
+                                rowContent.CloseComponent();
+                            }));
 
+                            dialogContent.CloseComponent();
+                        };
+                        return content;
+                    }, new DialogOptions() { ShowTitle = false, Style = "min-height:auto;min-width:auto;width:auto", CloseDialogOnEsc = false });
+                    var examQuestions = await IOGKFExamsDbService.GetExamQuestions(filter: $@"ExamId eq {exam.ExamId}");
+                    foreach(var examQuestion in examQuestions.Value.ToList())
+                    {
+                        var examAnswers = await IOGKFExamsDbService.GetExamAnswers(filter: $@"ExamQuestionsId eq {examQuestion.ExamQuestionsId}");
+                        foreach(var examAnswer in examAnswers.Value.ToList())
+                        {
+                            var deleteAnswerResult = await IOGKFExamsDbService.DeleteExamAnswer(examAnswer.ExamAnswerId);
+                        }
+                        var deleteQuestionResult = await IOGKFExamsDbService.DeleteExamQuestion(examQuestion.ExamQuestionsId);
+                    }
+                    var deleteResult = await IOGKFExamsDbService.DeleteExam(examId:exam.ExamId);
+                    DialogService.Close();
                     if (deleteResult != null)
                     {
                         await grid0.Reload();
@@ -101,11 +134,13 @@ namespace IOGKFExams.Client.Pages
             }
             catch (Exception ex)
             {
+                DialogService.Close();
+
                 NotificationService.Notify(new NotificationMessage
                 {
                     Severity = NotificationSeverity.Error,
                     Summary = $"Error",
-                    Detail = $"Unable to delete Exam"
+                    Detail = $"Unable to delete Exam. Error: {ex.Message}"
                 });
             }
         }
@@ -150,7 +185,7 @@ namespace IOGKFExams.Client.Pages
             TooltipService.Close();
         }
 
-        protected async System.Threading.Tasks.Task SendExamSMS(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
+        protected async System.Threading.Tasks.Task SendExamSMS(Microsoft.AspNetCore.Components.Web.MouseEventArgs args, IOGKFExams.Server.Models.IOGKFExamsDb.Exam exam)
         {
             try
             {
@@ -172,16 +207,30 @@ namespace IOGKFExams.Client.Pages
             }
         }
 
-        protected async System.Threading.Tasks.Task SendExamEmail(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
+        protected async System.Threading.Tasks.Task SendExamEmail(Microsoft.AspNetCore.Components.Web.MouseEventArgs args, IOGKFExams.Server.Models.IOGKFExamsDb.Exam exam)
         {
             try
             {
-                NotificationService.Notify(new NotificationMessage
+                var result = await BatchFunctionsService.SendExamEmail(exam.ExamId);
+                if (result.IsSuccessStatusCode)
                 {
-                    Severity = NotificationSeverity.Success,
-                    Summary = $"Success",
-                    Detail = $"Exam sent successfully"
-                });
+                    NotificationService.Notify(new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Success,
+                        Summary = $"Success",
+                        Detail = $"Exam sent successfully"
+                    });
+                }
+                else
+                {
+                    NotificationService.Notify(new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Error,
+                        Summary = $"Error",
+                        Detail = $"{result.ReasonPhrase}"
+                    });
+                }
+                
             }
             catch (Exception ex)
             {
@@ -217,7 +266,19 @@ namespace IOGKFExams.Client.Pages
 
         protected async System.Threading.Tasks.Task TakeTestButtonClick(Microsoft.AspNetCore.Components.Web.MouseEventArgs args, IOGKFExams.Server.Models.IOGKFExamsDb.Exam exam)
         {
-            await DialogService.OpenAsync<TakeExam>("Exam", new Dictionary<string, object>() { {"ExamGUID", exam.ExamGuid} }, new DialogOptions { Width = "100% "});
+            await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", $"https://demoapp.crown.software/take-exam/{exam.ExamGuid}");
+            NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Success, Summary = "Success", Detail = "Exam Url Copied to Clipboard" });
+        }
+
+        protected async System.Threading.Tasks.Task CopyExamUrlMouseEnter(Microsoft.AspNetCore.Components.ElementReference args)
+        {
+            TooltipService.Open(args, "Copy Exam Url", new TooltipOptions { Position = TooltipPosition.Top });
+
+        }
+
+        protected async System.Threading.Tasks.Task CopyExamUrlMouseLeave(Microsoft.AspNetCore.Components.ElementReference args)
+        {
+            TooltipService.Close();
         }
     }
 }
