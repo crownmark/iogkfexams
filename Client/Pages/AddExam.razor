@@ -42,6 +42,14 @@
                     <RadzenTextBox style="display: block; width: 100%" @bind-Value="@exam.Iogkfnumber" Name="StudentLastName" Placeholder="" />
               </ChildContent>
             </RadzenFormField>
+<RadzenFormField Text="Student Grading To Rank (This is not their current rank)" Variant="Variant.Outlined" Visible="true" Component="StudentRankId">
+      <ChildContent>
+          <RadzenDropDown TValue="int?" ValueProperty="RankId" TextProperty="RankName" Data="@ranks" LoadData="@ranksLoadData" Count="@ranksCount" @bind-Value="@exam.StudentRankId" Name="StudentRankId"/>
+  </ChildContent>
+      <Helper>
+          <RadzenNumericRangeValidator Text="Required" Component="StudentRankId" Min="1"></RadzenNumericRangeValidator>
+      </Helper>
+</RadzenFormField>
 <RadzenFormField Text="Mobile Phone To Send Exam To" Variant="Variant.Outlined" Visible="true" Component="StudentMobilePhoneE164">
                   <ChildContent>
                     <RadzenTextBox style="display: block; width: 100%" @bind-Value="@exam.StudentMobilePhoneE164" Name="StudentMobilePhoneE164" Placeholder="" Change="@ValidatePhone" />
@@ -98,7 +106,7 @@
           <RadzenStack style="margin-top:1rem;" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem" Wrap="Radzen.FlexWrap.Wrap">
                     <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Create Exam" Variant="Variant.Flat" Style="width: 100%" BusyText="Creating Exam" IsBusy="@creatingExam" Disabled="@sendExam" />
             <RadzenButton ButtonStyle="Radzen.ButtonStyle.Secondary" ButtonType="ButtonType.Submit" Icon="send" Text="Create & Send To Member" Variant="Variant.Flat" Click="@CreateAndSendButtonClick" Style="width: 100%" Visible="@(!string.IsNullOrEmpty(exam.StudentEmail) || !string.IsNullOrEmpty(exam.StudentMobilePhoneE164))" BusyText="Creating Exam & Sending" IsBusy="@sendExam" Disabled="@creatingExam" />
-                    <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancel" Variant="Variant.Flat" Click="@CancelButtonClick" Style="width: 100%"  />
+                    <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancel" Variant="Variant.Flat" Click="@CancelButtonClick" Style="width: 100%" Disabled="@(sendExam || creatingExam)"  />
           </RadzenStack>
         </RadzenTemplateForm>
     </RadzenColumn>

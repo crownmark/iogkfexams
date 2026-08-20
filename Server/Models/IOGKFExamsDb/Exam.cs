@@ -24,6 +24,9 @@ namespace IOGKFExams.Server.Models.IOGKFExamsDb
 
         public DateTimeOffset? CreatedDate { get; set; }
 
+        [MaxLength(450)]
+        public string CreatedBy { get; set; }
+
         public DateTimeOffset? CompletedDate { get; set; }
 
         public decimal? ExamGrade { get; set; }
@@ -53,6 +56,16 @@ namespace IOGKFExams.Server.Models.IOGKFExamsDb
         public int? LanguageId { get; set; }
 
         public Language Language { get; set; }
+
+        public int? StudentRankId { get; set; }
+
+        public Rank Rank { get; set; }
+
+        [MaxLength(500)]
+        public string StudentPdfExam { get; set; }
+
+        [MaxLength(500)]
+        public string InstructorPdfExamKey { get; set; }
 
         public ICollection<ExamQuestion> ExamQuestions { get; set; }
     }

@@ -48,14 +48,14 @@
                   <Helper>
                   </Helper>
             </RadzenFormField>
-            <RadzenFormField Text="Rank" Variant="Variant.Outlined">
+            <RadzenFormField Text="Rank Grading To (This is not the current rank)" Variant="Variant.Outlined">
                   <ChildContent>
                     <RadzenDropDownDataGrid Data="@(ranksForMinimumRankRequiredId)" TextProperty="RankName" ValueProperty="RankId" AllowClear=true
                           style="display: block; width: 100%" @bind-Value="@(examTemplateQuestion.MinimumRankRequiredId)" Name="MinimumRankRequiredId"
                         SelectedValue=@ranksForMinimumRankRequiredIdValue Count=@ranksForMinimumRankRequiredIdCount LoadData=@ranksForMinimumRankRequiredIdLoadData />
               </ChildContent>
               <Helper>
-                    <RadzenNumericRangeValidator Min="1"  Component="MinimumRankRequiredId" Text="Minimum Rank is required" />
+                    <RadzenNumericRangeValidator Min="1"  Component="MinimumRankRequiredId" Text="Rank Grading To Rank is required" />
                   </Helper>
             </RadzenFormField>
             <RadzenFormField Text="Section" Component="ExamSectionId">

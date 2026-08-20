@@ -78,6 +78,13 @@ namespace IOGKFExams.Server.Data
               .HasPrincipalKey(i => i.LanguageId)
               .OnDelete(DeleteBehavior.ClientNoAction);
 
+            builder.Entity<IOGKFExams.Server.Models.IOGKFExamsDb.Exam>()
+              .HasOne(i => i.Rank)
+              .WithMany(i => i.Exams)
+              .HasForeignKey(i => i.StudentRankId)
+              .HasPrincipalKey(i => i.RankId)
+              .OnDelete(DeleteBehavior.ClientNoAction);
+
             builder.Entity<IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplateAnswer>()
               .HasOne(i => i.ExamTemplateQuestion)
               .WithMany(i => i.ExamTemplateAnswers)

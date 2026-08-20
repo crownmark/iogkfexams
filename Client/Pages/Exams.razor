@@ -22,46 +22,62 @@
     <RadzenTextBox Placeholder="Search ..." style="display: block; width: 100%" @oninput="@Search" aria-label="Search by all string columns" />
     <RadzenRow>
       <RadzenColumn SizeMD=12>
-            <RadzenDataGrid @ref="grid0" ColumnWidth="200px" IsLoading="@gridLoading" Responsive="true" AllowFiltering="true" FilterMode="FilterMode.Advanced" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
-            Data="@(exams)" LoadData="@Grid0LoadData" Count="@count" TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" RowSelect="@EditRow">
-            <Columns>
-                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="ExamId" Title="@L["DataGridColumn0.Title"]">
-                </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="ExamSessionCode" Title="Session Code"></RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="Country.CountryName" Title="Country"></RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="StudentFirstName" Title="First Name"></RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="StudentLastName" Title="Last Name"></RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="Iogkfnumber" Title="IOGKF #"></RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="ExamStatus.Title" Title="Exam Status">
-                </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="CreatedDate" Title="Created Date">
-                </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="CompletedDate" Title="Completed Date">
-                </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="ExamGrade" Title="Exam Grade">
-                </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="ExamGuid" Title="Exam Guid" Visible="false">
-                                </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Filterable="false" Sortable="false" Width="180px" TextAlign="Radzen.TextAlign.Left" Frozen="true" FrozenPosition="Radzen.FrozenColumnPosition.Right">
-                    <Template Context="exam">
-
-                        
-                            <RadzenButton ButtonStyle="Radzen.ButtonStyle.Secondary" Icon="chat_paste_go" Style="width: 36px" Click="@((args) => SendExamSMS(args, exam))" Shade="Radzen.Shade.Light" Variant="Radzen.Variant.Flat" Visible="@(!string.IsNullOrEmpty(exam.StudentMobilePhoneE164))" @onclick:stopPropagation="true" MouseEnter="@SendSMSMouseEnter" MouseLeave="@SendSMSMouseLeave" />
-                            <RadzenButton ButtonStyle="Radzen.ButtonStyle.Secondary" Icon="outgoing_mail" Style="width: 36px" Click="@((args) => SendExamEmail(args, exam))" Shade="Radzen.Shade.Light" Variant="Radzen.Variant.Flat" Visible="@(!string.IsNullOrEmpty(exam.StudentEmail))" @onclick:stopPropagation="true" MouseEnter="@SendEmailMouseEnter" MouseLeave="@SendEmailMouseLeave"/>
-                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Medium"
-                            Shade="Shade.Lighter" Variant="Variant.Flat"
-                            Click=@(args => GridDeleteButtonClick(args, exam)) @onclick:stopPropagation="true" Style="width: 36px" />
-                            <RadzenButton Text="" Icon="content_copy" Click="@(args => TakeTestButtonClick(args, exam))" @onclick:stopPropagation="true" Visible="@(Security.IsInRole("Super Admins"))" Style="width: 36px" MouseEnter="@CopyExamUrlMouseEnter" MouseLeave="@CopyExamUrlMouseLeave"></RadzenButton>
+          <RadzenDataGrid @ref="grid0" ColumnWidth="200px" IsLoading="@gridLoading" Responsive="true" AllowFiltering="true" FilterMode="FilterMode.Advanced" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
+              Data="@(exams)" LoadData="@Grid0LoadData" Count="@count" TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" RowSelect="@EditRow">
+              <Columns>
+                  <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="ExamId" Title="@L["DataGridColumn0.Title"]" SortOrder="Radzen.SortOrder.Descending" Width="150px">
+                  </RadzenDataGridColumn>
+                  <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="ExamSessionCode" Title="Session Code" Width="175px"></RadzenDataGridColumn>
+                  <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="Country.CountryName" Title="Country"></RadzenDataGridColumn>
+                  <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="ExamStatus.Title" Title="Exam Status" Width="165px">
+                                    </RadzenDataGridColumn>
+                  <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="StudentFirstName" Title="First Name"></RadzenDataGridColumn>
+                  <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="StudentLastName" Title="Last Name"></RadzenDataGridColumn>
+                  <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="Iogkfnumber" Title="IOGKF #" Width="150px"></RadzenDataGridColumn>
+                  <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="CreatedDate" Title="Created" FormatString="{0:d}" Width="140px">
+                    <Template>
+                        <RadzenLabel Text="@(context.CreatedDate.HasValue ? context.CreatedDate.Value.ToLocalTime().ToString("d"): "")" />
                     </Template>
-                </RadzenDataGridColumn>
-            </Columns>
-            <HeaderTemplate>
-                <RadzenStack AlignItems="Radzen.AlignItems.Start">
-                    <RadzenButton Icon="refresh" Style="width: 36px" Click="@RefreshGridButtonClick" ButtonStyle="Radzen.ButtonStyle.Secondary" MouseEnter="@RefreshGridButtonMouseEnter" MouseLeave="@RefreshGridButtonMouseLeave"></RadzenButton>
-                </RadzenStack>
-            </HeaderTemplate>
+                  </RadzenDataGridColumn>
+                  <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="CompletedDate" Title="Completed" FormatString="{0:d}" Width="150px">
+                        <Template>
+                            <RadzenLabel Text="@(context.CompletedDate.HasValue ? context.CompletedDate.Value.ToLocalTime().ToString("d") : "")"  Visible="@(context.CompletedDate.HasValue)"/>
+                        </Template>
+                  </RadzenDataGridColumn>
+                  <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="ExamGrade" Title="Exam Grade">
+                  </RadzenDataGridColumn>
+                  <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="ExamGuid" Title="Exam Guid" Visible="false">
+                                  </RadzenDataGridColumn>
+                  <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="StudentPdfExam" Title="Student PDF" FrozenPosition="Radzen.FrozenColumnPosition.Right" Frozen="true" Width="170px">
+                      <Template>
+                            <RadzenButton ButtonStyle="Radzen.ButtonStyle.Secondary" Icon="attach_file_add" Style="width: 36px" Shade="Radzen.Shade.Light" Variant="Radzen.Variant.Flat" Visible="@(string.IsNullOrEmpty(context.StudentPdfExam))" @onclick:stopPropagation="true" MouseEnter="@CreateStudentPDFMouseEnter" MouseLeave="@CreateStudentPDFMouseLeave" Click="@((args) => CreateStudenPDFButtonClick(args, context))" />
 
-        </RadzenDataGrid>
+                          <RadzenLink Text="Download" Path="@context.StudentPdfExam" Icon="attachment" Visible="@(!string.IsNullOrEmpty(context.StudentPdfExam))" Target="_blank" @onclick:stopPropagation="true"></RadzenLink>
+                      </Template>
+                  </RadzenDataGridColumn>
+                  <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Property="InstructorPdfExamKey" Title="Answer Key" FrozenPosition="Radzen.FrozenColumnPosition.Right" Frozen="true" Width="170px" >
+                      <Template>
+                            <RadzenButton ButtonStyle="Radzen.ButtonStyle.Secondary" Icon="attach_file_add" Style="width: 36px" Shade="Radzen.Shade.Light" Variant="Radzen.Variant.Flat" Visible="@(string.IsNullOrEmpty(context.InstructorPdfExamKey))" @onclick:stopPropagation="true" MouseEnter="@CreateAnswerKeyPDFMouseEnter" MouseLeave="@CreateAnswerKeyPDFMouseLeave" Click="@((args) => CreateAnswerKeyPdfButtonClick(args, context))" />
+
+                          <RadzenLink Text="Download" Path="@context.InstructorPdfExamKey" Icon="attachment" Visible="@(!string.IsNullOrEmpty(context.InstructorPdfExamKey ))" Target="_blank" @onclick:stopPropagation="true"></RadzenLink>
+                      </Template>
+                  </RadzenDataGridColumn>
+                  <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.Exam" Filterable="false" Sortable="false" Width="180px" TextAlign="Radzen.TextAlign.Left" Frozen="true" FrozenPosition="Radzen.FrozenColumnPosition.Right">
+                      <Template Context="exam">
+                              <RadzenButton ButtonStyle="Radzen.ButtonStyle.Secondary" Icon="chat_paste_go" Style="width: 36px" Click="@((args) => SendExamSMS(args, exam))" Shade="Radzen.Shade.Light" Variant="Radzen.Variant.Flat" Visible="@(!string.IsNullOrEmpty(exam.StudentMobilePhoneE164))" @onclick:stopPropagation="true" MouseEnter="@SendSMSMouseEnter" MouseLeave="@SendSMSMouseLeave" />
+                              <RadzenButton ButtonStyle="Radzen.ButtonStyle.Secondary" Icon="outgoing_mail" Style="width: 36px" Click="@((args) => SendExamEmail(args, exam))" Shade="Radzen.Shade.Light" Variant="Radzen.Variant.Flat" Visible="@(!string.IsNullOrEmpty(exam.StudentEmail))" @onclick:stopPropagation="true" MouseEnter="@SendEmailMouseEnter" MouseLeave="@SendEmailMouseLeave"/>
+                              <RadzenButton Text="" Icon="content_copy" Click="@(args => TakeTestButtonClick(args, exam))" @onclick:stopPropagation="true" Visible="@(Security.IsInRole("Super Admins"))" Style="width: 36px" MouseEnter="@CopyExamUrlMouseEnter" MouseLeave="@CopyExamUrlMouseLeave"></RadzenButton>
+                              <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Medium" Shade="Shade.Lighter" Variant="Variant.Flat" Click=@(args => GridDeleteButtonClick(args, exam)) @onclick:stopPropagation="true" Style="width: 36px" />
+                      </Template>
+                  </RadzenDataGridColumn>
+              </Columns>
+              <HeaderTemplate>
+                  <RadzenStack AlignItems="Radzen.AlignItems.Start">
+                      <RadzenButton Icon="refresh" Style="width: 36px" Click="@RefreshGridButtonClick" ButtonStyle="Radzen.ButtonStyle.Secondary" MouseEnter="@RefreshGridButtonMouseEnter" MouseLeave="@RefreshGridButtonMouseLeave"></RadzenButton>
+                  </RadzenStack>
+              </HeaderTemplate>
+          
+          </RadzenDataGrid>
 
     </RadzenColumn>
   </RadzenRow>

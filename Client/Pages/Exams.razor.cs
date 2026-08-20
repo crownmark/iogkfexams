@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Radzen;
 using Radzen.Blazor;
+using IOGKFExams.Server.Helpers;
 
 namespace IOGKFExams.Client.Pages
 {
@@ -35,6 +36,9 @@ namespace IOGKFExams.Client.Pages
 
         [Inject]
         public IOGKFExamsDbService IOGKFExamsDbService { get; set; }
+
+        [Inject]
+        public SmsService SmsService { get; set; }
 
         protected IEnumerable<IOGKFExams.Server.Models.IOGKFExamsDb.Exam> exams;
 
@@ -189,12 +193,59 @@ namespace IOGKFExams.Client.Pages
         {
             try
             {
-                NotificationService.Notify(new NotificationMessage
+                // Send Email Message to Student
+                if (!string.IsNullOrEmpty(exam.StudentMobilePhoneE164))
                 {
-                    Severity = NotificationSeverity.Success,
-                    Summary = $"Success",
-                    Detail = $"Exam sent successfully"
-                });
+                    try
+                    {
+                        var notificationTemplates = await IOGKFExamsDbService.GetNotificationTemplates(filter: $"LanguageId eq {exam.LanguageId} and Active eq true and Channel eq 'SMS'");
+                        var notificationTemplate = notificationTemplates.Value.FirstOrDefault();
+                        if (notificationTemplate != null)
+                        {
+
+                            var tokens = new Dictionary<string, string>
+                                {
+                                    { "StudentFirstName", exam.StudentFirstName },
+                                    { "StudentLastName", exam.StudentLastName },
+                                    { "ExamId", exam.ExamId.ToString() },
+                                    { "ExamSessionCode", exam.ExamSessionCode.ToString() },
+                                    { "ExamUrl", $"https://demoapp.crown.software/take-exam/{exam.ExamGuid}" }
+                                };
+                            var updatedNotificationTemplate = TokenReplacementHelper.ReplaceTokens(notificationTemplate, tokens);
+                            // Send Email Logic Here    
+                            var result = await SmsService.SendSms(exam.StudentMobilePhoneE164, updatedNotificationTemplate.MessageBody);
+                            if (result.Success)
+                            {
+                                NotificationService.Notify(new NotificationMessage
+                                {
+                                    Severity = NotificationSeverity.Success,
+                                    Summary = $"Success",
+                                    Detail = $"Exam SMS sent successfully"
+                                });
+                            }
+                            else
+                            {
+                                NotificationService.Notify(new NotificationMessage
+                                {
+                                    Severity = NotificationSeverity.Error,
+                                    Summary = $"Error",
+                                    Detail = $"Unable to send Exam SMS.  Error: {result.ErrorMessage}"
+                                });
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        NotificationService.Notify(new NotificationMessage
+                        {
+                            Severity = NotificationSeverity.Error,
+                            Summary = $"Error",
+                            Detail = $"Unable to send Exam.  Error: {ex.Message}"
+                        });
+                    }
+
+                }
+               
             }
             catch (Exception ex)
             {
@@ -253,6 +304,26 @@ namespace IOGKFExams.Client.Pages
             TooltipService.Close();
         }
 
+        protected async System.Threading.Tasks.Task CreateStudentPDFMouseEnter(Microsoft.AspNetCore.Components.ElementReference args)
+        {
+            TooltipService.Open(args, "Create Student Exam PDF");
+        }
+
+        protected async System.Threading.Tasks.Task CreateStudentPDFMouseLeave(Microsoft.AspNetCore.Components.ElementReference args)
+        {
+            TooltipService.Close();
+        }
+
+        protected async System.Threading.Tasks.Task CreateAnswerKeyPDFMouseEnter(Microsoft.AspNetCore.Components.ElementReference args)
+        {
+            TooltipService.Open(args, "Create Exam Answer Key PDF");
+        }
+
+        protected async System.Threading.Tasks.Task CreateAnswerKeyPDFMouseLeave(Microsoft.AspNetCore.Components.ElementReference args)
+        {
+            TooltipService.Close();
+        }
+
         protected async System.Threading.Tasks.Task SendEmailMouseEnter(Microsoft.AspNetCore.Components.ElementReference args)
         {
             TooltipService.Open(args, "Send Exam Email to Member");
@@ -279,6 +350,79 @@ namespace IOGKFExams.Client.Pages
         protected async System.Threading.Tasks.Task CopyExamUrlMouseLeave(Microsoft.AspNetCore.Components.ElementReference args)
         {
             TooltipService.Close();
+        }
+
+        protected async System.Threading.Tasks.Task CreateStudenPDFButtonClick(Microsoft.AspNetCore.Components.Web.MouseEventArgs args, IOGKFExams.Server.Models.IOGKFExamsDb.Exam exam)
+        {
+            try
+            {
+                DialogService.OpenAsync("", ds =>
+                {
+                    RenderFragment content = dialogContent =>
+                    {
+                        dialogContent.OpenComponent<RadzenRow>(0);
+                        dialogContent.AddComponentParameter(1, nameof(RadzenRow.ChildContent), (RenderFragment)(rowContent =>
+                        {
+                            rowContent.OpenComponent<RadzenColumn>(0);
+                            rowContent.AddComponentParameter(1, nameof(RadzenColumn.Size), 12);
+                            rowContent.AddComponentParameter(2, nameof(RadzenRow.ChildContent), (RenderFragment)(columnContent =>
+                            {
+                                columnContent.AddContent(0, "Creating Exam Pdf and Answer Key.  Please wait...");
+                            }));
+                            rowContent.CloseComponent();
+                        }));
+
+                        dialogContent.CloseComponent();
+                    };
+                    return content;
+                }, new DialogOptions() { ShowTitle = false, Style = "min-height:auto;min-width:auto;width:auto", CloseDialogOnEsc = false });
+                await BatchFunctionsService.GenerateExamPdf(exam.ExamGuid);
+                DialogService.Close();
+                await grid0.Reload();
+
+            }
+            catch (Exception ex)
+            {
+                DialogService.Close();
+                NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Success, Summary = "Error", Detail = $"{ex.Message}" });
+
+            }
+        }
+
+        protected async System.Threading.Tasks.Task CreateAnswerKeyPdfButtonClick(Microsoft.AspNetCore.Components.Web.MouseEventArgs args, IOGKFExams.Server.Models.IOGKFExamsDb.Exam exam)
+        {
+            try
+            {
+                DialogService.OpenAsync("", ds =>
+                {
+                    RenderFragment content = dialogContent =>
+                    {
+                        dialogContent.OpenComponent<RadzenRow>(0);
+                        dialogContent.AddComponentParameter(1, nameof(RadzenRow.ChildContent), (RenderFragment)(rowContent =>
+                        {
+                            rowContent.OpenComponent<RadzenColumn>(0);
+                            rowContent.AddComponentParameter(1, nameof(RadzenColumn.Size), 12);
+                            rowContent.AddComponentParameter(2, nameof(RadzenRow.ChildContent), (RenderFragment)(columnContent =>
+                            {
+                                columnContent.AddContent(0, "Creating Exam Pdf and Answer Key.  Please wait...");
+                            }));
+                            rowContent.CloseComponent();
+                        }));
+
+                        dialogContent.CloseComponent();
+                    };
+                    return content;
+                }, new DialogOptions() { ShowTitle = false, Style = "min-height:auto;min-width:auto;width:auto", CloseDialogOnEsc = false });
+                await BatchFunctionsService.GenerateExamPdf(exam.ExamGuid);
+                DialogService.Close();  
+                await grid0.Reload();
+            }
+            catch (Exception ex)
+            {
+                DialogService.Close();
+                NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Success, Summary = "Error", Detail = $"{ex.Message}" });
+
+            }
         }
     }
 }

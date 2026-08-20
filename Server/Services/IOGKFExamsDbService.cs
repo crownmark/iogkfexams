@@ -589,6 +589,7 @@ namespace IOGKFExams.Server
             items = items.Include(i => i.Country);
             items = items.Include(i => i.ExamStatus);
             items = items.Include(i => i.Language);
+            items = items.Include(i => i.Rank);
 
             if (query != null)
             {
@@ -622,6 +623,7 @@ namespace IOGKFExams.Server
             items = items.Include(i => i.Country);
             items = items.Include(i => i.ExamStatus);
             items = items.Include(i => i.Language);
+            items = items.Include(i => i.Rank);
  
             OnGetExamByExamId(ref items);
 
@@ -696,6 +698,7 @@ namespace IOGKFExams.Server
             exam.Country = null;
             exam.ExamStatus = null;
             exam.Language = null;
+            exam.Rank = null;
 
             Context.Attach(exam).State = EntityState.Modified;
 

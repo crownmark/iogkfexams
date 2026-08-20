@@ -1,14 +1,16 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.OData.Query;
-using IOGKFExams.Server.Models;
 using IOGKFExams.Server.Data;
-using IOGKFExams.Server.Models.IOGKFExamsDb;
-using Microsoft.EntityFrameworkCore;
-using Radzen;
-using System.Text;
-using System.Security.Cryptography;
 using IOGKFExams.Server.Helpers;
+using IOGKFExams.Server.Models;
+using IOGKFExams.Server.Models.IOGKFExamsDb;
+using IOGKFExams.Server.Models.Sms;
+using IOGKFExams.Server.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Radzen;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace IOGKFExams.Server.Controllers
 {
@@ -16,17 +18,22 @@ namespace IOGKFExams.Server.Controllers
     {
         private readonly IWebHostEnvironment environment;
         private readonly IOGKFExamsDbContext context;
+        private readonly IOGKFExams.Server.IOGKFExamsDbService _examDbService;
+        private readonly IExamPdfService _pdfService;
         private readonly IHttpContextAccessor httpContextAccessor;
         private string baseUrl;
         private readonly IConfiguration configuration;
 
 
-        public BatchFunctionsController(IWebHostEnvironment environment, IOGKFExamsDbContext context, IHttpContextAccessor httpContextAccessor,IConfiguration configuration)
+        public BatchFunctionsController(IWebHostEnvironment environment, IOGKFExamsDbContext context, IHttpContextAccessor httpContextAccessor,IConfiguration configuration, IOGKFExams.Server.IOGKFExamsDbService examDbService,
+        IExamPdfService pdfService)
         {
             this.environment = environment;
             this.context = context;
             this.configuration = configuration;
             this.httpContextAccessor = httpContextAccessor;
+            this._examDbService = examDbService;
+            this._pdfService = pdfService;
             var request = httpContextAccessor.HttpContext?.Request;
             if (request != null)
             {
@@ -47,6 +54,46 @@ namespace IOGKFExams.Server.Controllers
                 // Ensure result is always a 6-digit number between 100000–999999
                 return 100000 + (positiveHash % 900000);
             }
+        }
+
+        [HttpGet("BatchFunctions/SendExamSms")]
+        public async Task<SendSmsResponse> SendExamSms(string phoneNumber, string message)
+        {
+            var _httpClient = new HttpClient();
+       
+            var request = new SendSmsRequest
+            {
+                To = phoneNumber,
+                Message = message
+            };
+
+            var response =
+                await _httpClient.PostAsJsonAsync(
+                    "api/sms/send",
+                    request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content
+                           .ReadFromJsonAsync<SendSmsResponse>()
+                       ?? new SendSmsResponse
+                       {
+                           Success = false,
+                           ErrorMessage =
+                               "Invalid response from SMS service."
+                       };
+            }
+
+            var error =
+                await response.Content
+                    .ReadFromJsonAsync<SendSmsResponse>();
+
+            return error ?? new SendSmsResponse
+            {
+                Success = false,
+                ErrorMessage =
+                    $"SMS request failed: {response.StatusCode}"
+            };
         }
 
         [HttpGet("BatchFunctions/SendExamEmail")]
@@ -116,7 +163,7 @@ namespace IOGKFExams.Server.Controllers
                 if (exam != null)
                 {
                     var template = await context.ExamTemplates.FindAsync(templateId);
-                    var questions = await context.ExamTemplateQuestions.Where(x => x.ExamTemplateId == template.ExamTemplateId).ToListAsync();
+                    var questions = await context.ExamTemplateQuestions.Where(x => x.ExamTemplateId == template.ExamTemplateId && x.MinimumRankRequiredId <= exam.StudentRankId).ToListAsync();
                     foreach (var question in questions)
                     {
                         var newQuestion = await context.ExamQuestions.AddAsync(new ExamQuestion()
@@ -144,8 +191,11 @@ namespace IOGKFExams.Server.Controllers
                         await context.SaveChangesAsync();
                     }
 
+                    //Create PDF for Exam
+                    await GenerateExamPdf(exam.ExamGuid);
+
                     // Send Email Message to Student
-                    if (!string.IsNullOrEmpty(exam.StudentEmail))
+                    if (!string.IsNullOrEmpty(exam.StudentEmail) && sendExam)
                     {
                         try
                         {
@@ -173,7 +223,7 @@ namespace IOGKFExams.Server.Controllers
 
                     }
                     // Send SMS Message to Student    
-                    if (!string.IsNullOrEmpty(exam.StudentMobilePhoneE164))
+                    if (!string.IsNullOrEmpty(exam.StudentMobilePhoneE164) && sendExam)
                     {
                         try
                         {
@@ -191,6 +241,7 @@ namespace IOGKFExams.Server.Controllers
                                 };
                                 var updatedNotificationTemplate = TokenReplacementHelper.ReplaceTokens(notificationTemplate, tokens);
                                 // Send SMS Logic Here   
+                                await SendExamSms(exam.StudentMobilePhoneE164, updatedNotificationTemplate.MessageBody);
                             }
                         }
                         catch (Exception ex)
@@ -212,6 +263,58 @@ namespace IOGKFExams.Server.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpGet("BatchFunctions/GenerateExamPdf/{examGuid}")]
+        public async Task GenerateExamPdf(string examGuid)
+        {
+            var examForPdf = await _examDbService.GetExamForPdf(examGuid);
+            var exam = await context.Exams.FindAsync(examForPdf.ExamId);
+
+            if (examForPdf == null)
+                throw new Exception("Unable to generate PDF. Exam was not found.");
+
+            var folder = Path.Combine(
+                environment.WebRootPath,
+                "GeneratedExams");
+
+            Directory.CreateDirectory(folder);
+
+            // Student exam
+            var studentPdf =
+                _pdfService.GenerateStudentExam(examForPdf);
+
+            var studentFileName =
+                $"IOGKF-Exam-{examForPdf.ExamId}.pdf";
+
+            var studentFilePath =
+                Path.Combine(folder, studentFileName);
+
+            await System.IO.File.WriteAllBytesAsync(
+                studentFilePath,
+                studentPdf);
+
+            exam.StudentPdfExam = $"{baseUrl}/GeneratedExams/{studentFileName}";
+
+
+            // Answer key
+            var answerKeyPdf =
+                _pdfService.GenerateAnswerKey(examForPdf);
+
+            var answerKeyFileName =
+                $"IOGKF-Exam-{examForPdf.ExamId}-Key.pdf";
+
+            var answerKeyFilePath =
+                Path.Combine(folder, answerKeyFileName);
+
+            await System.IO.File.WriteAllBytesAsync(
+                answerKeyFilePath,
+                answerKeyPdf);
+
+            exam.InstructorPdfExamKey = $"{baseUrl}/GeneratedExams/{answerKeyFileName}";
+            context.Exams.Update(exam);
+            context.SaveChanges();
+        }
+
         [HttpGet("BatchFunctions/SendEmailAsync/{to}/{subject}/{body}")]
         public async Task SendEmailAsync(string to, string subject, string body)
         {

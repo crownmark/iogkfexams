@@ -87,6 +87,10 @@ namespace IOGKFExams.Client.Pages
 
         protected int languagesCount;
 
+        protected IEnumerable<IOGKFExams.Server.Models.IOGKFExamsDb.Rank> ranks;
+
+        protected int ranksCount;
+
         protected async Task examTemplatesLoadData(LoadDataArgs args)
         {
             try
@@ -223,6 +227,22 @@ namespace IOGKFExams.Client.Pages
 
                 languages = result.Value.AsODataEnumerable();
                 languagesCount = result.Count;
+            }
+            catch (Exception)
+            {
+                NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Error, Summary = "Error", Detail = "Unable to load" });
+            }
+        }
+
+
+        protected async Task ranksLoadData(LoadDataArgs args)
+        {
+            try
+            {
+                var result = await IOGKFExamsDbService.GetRanks(new Query { Top = args.Top, Skip = args.Skip, Filter = $"contains(RankName, \"{(!string.IsNullOrEmpty(args.Filter) ? args.Filter: "")}\")", OrderBy = args.OrderBy });
+
+                ranks = result.Value.AsODataEnumerable();
+                ranksCount = result.Count;
             }
             catch (Exception)
             {

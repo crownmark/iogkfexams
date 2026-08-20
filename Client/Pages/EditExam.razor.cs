@@ -52,6 +52,10 @@ namespace IOGKFExams.Client.Pages
         protected int examStatusesForExamStatusIdCount;
         protected IOGKFExams.Server.Models.IOGKFExamsDb.ExamStatus examStatusesForExamStatusIdValue;
 
+        protected IEnumerable<IOGKFExams.Server.Models.IOGKFExamsDb.Rank> ranks;
+
+        protected int ranksCount;
+
         [Inject]
         protected SecurityService Security { get; set; }
         protected async Task examStatusesForExamStatusIdLoadData(LoadDataArgs args)
@@ -121,10 +125,25 @@ namespace IOGKFExams.Client.Pages
         {
             try
             {
-                var result = await IOGKFExamsDbService.GetLanguages(new Query { Top = args.Top, Skip = args.Skip, Filter = $"contains(LanguageName, \"{(!string.IsNullOrEmpty(args.Filter) ? args.Filter: "")}\")", OrderBy = args.OrderBy });
+                var result = await IOGKFExamsDbService.GetLanguages(new Query { Top = args.Top, Skip = args.Skip, Filter = $"contains(LanguageName, \"{(!string.IsNullOrEmpty(args.Filter) ? args.Filter : "")}\")", OrderBy = args.OrderBy });
 
                 languages = result.Value.AsODataEnumerable();
                 languagesCount = result.Count;
+            }
+            catch (Exception)
+            {
+                NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Error, Summary = "Error", Detail = "Unable to load" });
+            }
+        }
+        
+        protected async Task ranksLoadData(LoadDataArgs args)
+        {
+            try
+            {
+                var result = await IOGKFExamsDbService.GetRanks(new Query { Top = args.Top, Skip = args.Skip, Filter = $"contains(RankName, \"{(!string.IsNullOrEmpty(args.Filter) ? args.Filter: "")}\")", OrderBy = args.OrderBy });
+
+                ranks = result.Value.AsODataEnumerable();
+                ranksCount = result.Count;
             }
             catch (Exception)
             {

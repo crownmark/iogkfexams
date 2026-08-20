@@ -1,13 +1,17 @@
-using Radzen;
+using IOGKFExams.Client;
 using IOGKFExams.Server.Components;
+using IOGKFExams.Server.Data;
+using IOGKFExams.Server.Models;
+using IOGKFExams.Server.Services;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OData.ModelBuilder;
-using Microsoft.AspNetCore.OData;
-using IOGKFExams.Server.Data;
-using Microsoft.AspNetCore.Identity;
-using IOGKFExams.Server.Models;
-using Microsoft.AspNetCore.Components.Authorization;
-using IOGKFExams.Client;
+using QuestPDF.Infrastructure;
+using Radzen;
+using QuestPDF.Fluent;
+
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -74,6 +78,7 @@ builder.Services.AddDbContext<IOGKFExams.Server.Data.IOGKFExamsDbContext>(option
     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
     options.UseSqlServer(builder.Configuration.GetConnectionString("IOGKFExamsDbConnection"));
 });
+builder.Services.AddScoped<IExamPdfService, ExamPdfService>();
 var app = builder.Build();
 var forwardingOptions = new ForwardedHeadersOptions()
 {
@@ -94,6 +99,28 @@ else
     app.UseHsts();
 }
 
+QuestPDF.Settings.License = LicenseType.Community;
+app.MapGet(
+    "/api/exams/{examGuid}/pdf",
+    async (
+        string examGuid,
+        IExamPdfService pdfService,
+        IOGKFExams.Server.IOGKFExamsDbService examService) =>
+    {
+        var exam = new ExamPdfModel();
+            await examService.GetExamForPdf(examGuid);
+
+        if (exam == null)
+            return Results.NotFound();
+
+        var pdf =
+            pdfService.GenerateStudentExam(exam);
+
+        return Results.File(
+            pdf,
+            "application/pdf",
+            $"IOGKF-Exam-{exam.ExamId}.pdf");
+    });
 app.UseStatusCodePagesWithReExecute("/not-found");
 app.UseHttpsRedirection();
 app.MapControllers();

@@ -113,7 +113,7 @@ namespace IOGKFExams.Server.Controllers.IOGKFExamsDb
                 this.context.SaveChanges();
 
                 var itemToReturn = this.context.Exams.Where(i => i.ExamId == key);
-                Request.QueryString = Request.QueryString.Add("$expand", "Country,ExamStatus,Language");
+                Request.QueryString = Request.QueryString.Add("$expand", "Country,AspNetUser,ExamStatus,Language,Rank");
                 this.OnAfterExamUpdated(item);
                 return new ObjectResult(SingleResult.Create(itemToReturn));
             }
@@ -148,7 +148,7 @@ namespace IOGKFExams.Server.Controllers.IOGKFExamsDb
                 this.context.SaveChanges();
 
                 var itemToReturn = this.context.Exams.Where(i => i.ExamId == key);
-                Request.QueryString = Request.QueryString.Add("$expand", "Country,ExamStatus,Language");
+                Request.QueryString = Request.QueryString.Add("$expand", "Country,AspNetUser,ExamStatus,Language,Rank");
                 this.OnAfterExamUpdated(item);
                 return new ObjectResult(SingleResult.Create(itemToReturn));
             }
@@ -184,7 +184,7 @@ namespace IOGKFExams.Server.Controllers.IOGKFExamsDb
 
                 var itemToReturn = this.context.Exams.Where(i => i.ExamId == item.ExamId);
 
-                Request.QueryString = Request.QueryString.Add("$expand", "Country,ExamStatus,Language");
+                Request.QueryString = Request.QueryString.Add("$expand", "Country,AspNetUser,ExamStatus,Language,Rank");
 
                 this.OnAfterExamCreated(item);
 

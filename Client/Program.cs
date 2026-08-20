@@ -1,9 +1,9 @@
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Radzen;
 using IOGKFExams.Client;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.JSInterop;
+using Radzen;
 using System.Globalization;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -16,6 +16,7 @@ builder.Services.AddRadzenCookieThemeService(options =>
 builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddScoped<IOGKFExams.Client.IOGKFExamsDbService>();
 builder.Services.AddScoped<IOGKFExams.Client.BatchFunctionsService>();
+builder.Services.AddScoped<SmsService>();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddHttpClient("IOGKFExams.Server", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
 builder.Services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("IOGKFExams.Server"));
