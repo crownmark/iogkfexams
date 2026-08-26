@@ -218,7 +218,7 @@ namespace IOGKFExams.Server.Controllers
                         }
                         catch (Exception ex)
                         {
-                            
+
                         }
 
                     }
@@ -254,6 +254,65 @@ namespace IOGKFExams.Server.Controllers
                 else
                 {
                     return StatusCode(500, $"Unable to Find Exam with ID: {examId}");
+                }
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500, ex.Message);
+            }
+        }
+        
+        [HttpGet("BatchFunctions/duplicatesingleexamtemplate")]
+        public async Task<IActionResult> DuplicateSingleExamTemplate([FromQuery] int templateId)
+        {
+            try
+            {
+                var template = await context.ExamTemplates.FindAsync(templateId);
+                if (template != null)
+                {
+                    //Create new Exam Template
+                    var newTemplate = await context.ExamTemplates.AddAsync(new ExamTemplate()
+                    {
+                        Active = true,
+                        ExamTemplateTitle = template.ExamTemplateTitle + " - Copy",
+                        LanguageId = template.LanguageId,
+                    });
+                    await context.SaveChangesAsync();
+
+                    var questions = await context.ExamTemplateQuestions.Where(x => x.ExamTemplateId == template.ExamTemplateId).ToListAsync();
+                    foreach (var question in questions)
+                    {
+                        var newQuestion = await context.ExamTemplateQuestions.AddAsync(new ExamTemplateQuestion()
+                        {
+                            Active = true,
+                            ExamSectionId = question.ExamSectionId,
+                            LanguageId = question.LanguageId,
+                            MinimumRankRequiredId = question.MinimumRankRequiredId,
+                            Question = question.Question,
+                            QuestionImageUrl = question.QuestionImageUrl,
+                            ExamTemplateId = newTemplate.Entity.ExamTemplateId
+                        });
+                        await context.SaveChangesAsync();
+                        var answers = await context.ExamTemplateAnswers.Where(x => x.ExamTemplateQuestionsId == question.ExamTemplateQuestionsId).ToListAsync();
+                        foreach (var answer in answers)
+                        {
+                            await context.ExamTemplateAnswers.AddAsync(new ExamTemplateAnswer()
+                            {
+                                ExamTemplateAnswer1 = answer.ExamTemplateAnswer1,
+                                IsCorrectAnswer = answer.IsCorrectAnswer,
+                                ExamTemplateQuestionsId = newQuestion.Entity.ExamTemplateQuestionsId,
+                            });
+                        }
+                        await context.SaveChangesAsync();
+                    }
+
+                    
+                }
+                else
+                {
+                    return StatusCode(500, $"Unable to Find Exam Template with ID: {templateId}");
                 }
                 return Ok();
             }

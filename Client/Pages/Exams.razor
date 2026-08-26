@@ -19,7 +19,11 @@
             </RadzenStack>
         </RadzenColumn>
     </RadzenRow>
-    <RadzenTextBox Placeholder="Search ..." style="display: block; width: 100%" @oninput="@Search" aria-label="Search by all string columns" />
+    <RadzenStack Orientation="Radzen.Orientation.Horizontal" JustifyContent="Radzen.JustifyContent.SpaceBetween" AlignItems="Radzen.AlignItems.Center" Gap="5">
+        <RadzenTextBox Placeholder="Search ..." style="display: block; width: 100%" @oninput="@Search" aria-label="Search by all string columns" @bind-Value="@search" />
+        <RadzenButton Text="" Icon="clear" ButtonStyle="Radzen.ButtonStyle.Secondary" MouseEnter="@ClearSearchButtonMouseEnter" MouseLeave="@ClearSearchButtonMouseLeave" Click="@ClearSearchButtonButtonClick"></RadzenButton>
+    </RadzenStack>
+    
     <RadzenRow>
       <RadzenColumn SizeMD=12>
           <RadzenDataGrid @ref="grid0" ColumnWidth="200px" IsLoading="@gridLoading" Responsive="true" AllowFiltering="true" FilterMode="FilterMode.Advanced" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})

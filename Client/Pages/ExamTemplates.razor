@@ -33,10 +33,15 @@
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplate" Filterable="false" Sortable="false" Width="70px" TextAlign="TextAlign.Center">
                     <Template Context="examTemplate">
-
+                        <RadzenStack Orientation="Radzen.Orientation.Horizontal" Gap="5">
+                        <RadzenButton ButtonStyle="Radzen.ButtonStyle.Primary" Icon="content_copy" Size="ButtonSize.Medium"
+                            Shade="Radzen.Shade.Default" Variant="Variant.Flat"
+                            Click=@(args => GridCopyButtonClick(args, examTemplate)) @onclick:stopPropagation="true" MouseEnter="@DuplicateButtonMouseEnter" MouseLeave="@DuplicateButtonMouseLeave" />
                         <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Medium"
-                            Shade="Shade.Lighter" Variant="Variant.Flat"
-                            Click=@(args => GridDeleteButtonClick(args, examTemplate)) @onclick:stopPropagation="true" />
+                                                    Shade="Shade.Lighter" Variant="Variant.Flat"
+                                                    Click=@(args => GridDeleteButtonClick(args, examTemplate)) @onclick:stopPropagation="true" />
+                        </RadzenStack>
+                        
                     </Template>
                 </RadzenDataGridColumn>
             </Columns>

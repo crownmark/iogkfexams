@@ -45,6 +45,17 @@ namespace IOGKFExams.Client
             return response;
         }
 
+        public async Task<HttpResponseMessage>DuplicateExamTemplate(int templateId)
+        {
+            var uri = new Uri(baseUri, $"BatchFunctions/duplicatesingleexamtemplate?templateId={templateId}");
+
+            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
+
+            var response = await httpClient.SendAsync(httpRequestMessage);
+
+            return response;
+        }
+
         public async Task<HttpResponseMessage> GenerateExamPdf(string examGuid)
         {
             var uri = new Uri(baseUri, $"BatchFunctions/GenerateExamPdf/{examGuid}");

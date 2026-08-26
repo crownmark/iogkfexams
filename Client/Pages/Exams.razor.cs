@@ -66,7 +66,7 @@ namespace IOGKFExams.Client.Pages
             try
             {
                 gridLoading = true;
-                var result = await IOGKFExamsDbService.GetExams(filter: $@"{(string.IsNullOrEmpty(args.Filter)? "true" : args.Filter)}", expand: "ExamStatus,Country", orderby: $"{args.OrderBy}", top: args.Top, skip: args.Skip, count:args.Top != null && args.Skip != null);
+                var result = await IOGKFExamsDbService.GetExams(filter: $@"(contains(StudentFirstName,""{search}"") or contains(StudentLastName,""{search}"") or contains(Iogkfnumber,""{search}"") or contains(StudentEmail,""{search}"") or contains(StudentMobilePhoneE164,""{search}"")) and {(string.IsNullOrEmpty(args.Filter)? "true" : args.Filter)}", expand: "ExamStatus,Country,Language", orderby: $"{args.OrderBy}", top: args.Top, skip: args.Skip, count:args.Top != null && args.Skip != null);
                 exams = result.Value.AsODataEnumerable();
                 count = result.Count;
                 gridLoading = false;
@@ -423,6 +423,23 @@ namespace IOGKFExams.Client.Pages
                 NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Success, Summary = "Error", Detail = $"{ex.Message}" });
 
             }
+        }
+
+        protected async System.Threading.Tasks.Task ClearSearchButtonMouseEnter(Microsoft.AspNetCore.Components.ElementReference args)
+        {
+            TooltipService.Open(args, "Clear Search and Refresh Data", new TooltipOptions { Position = TooltipPosition.Top });
+
+        }
+
+        protected async System.Threading.Tasks.Task ClearSearchButtonMouseLeave(Microsoft.AspNetCore.Components.ElementReference args)
+        {
+            TooltipService.Close();
+        }
+
+        protected async System.Threading.Tasks.Task ClearSearchButtonButtonClick(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
+        {
+            search = "";
+            await grid0.Reload();
         }
     }
 }

@@ -33,6 +33,8 @@ namespace IOGKFExams.Client.Pages
         [Inject]
         public IOGKFExamsDbService IOGKFExamsDbService { get; set; }
 
+        [Inject]
+        public BatchFunctionsService BatchFunctionsService { get; set; }
         protected IEnumerable<IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplate> examTemplates;
 
         protected RadzenDataGrid<IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplate> grid0;
@@ -90,8 +92,38 @@ namespace IOGKFExams.Client.Pages
             {
                 if (await DialogService.Confirm("Are you sure you want to delete this record?") == true)
                 {
-                    var deleteResult = await IOGKFExamsDbService.DeleteExamTemplate(examTemplateId:examTemplate.ExamTemplateId);
+                    DialogService.OpenAsync("", ds =>
+                    {
+                        RenderFragment content = dialogContent =>
+                        {
+                            dialogContent.OpenComponent<RadzenRow>(0);
+                            dialogContent.AddComponentParameter(1, nameof(RadzenRow.ChildContent), (RenderFragment)(rowContent =>
+                            {
+                                rowContent.OpenComponent<RadzenColumn>(0);
+                                rowContent.AddComponentParameter(1, nameof(RadzenColumn.Size), 12);
+                                rowContent.AddComponentParameter(2, nameof(RadzenRow.ChildContent), (RenderFragment)(columnContent =>
+                                {
+                                    columnContent.AddContent(0, "Deleting Template.  This will take a moment.  Please wait...");
+                                }));
+                                rowContent.CloseComponent();
+                            }));
 
+                            dialogContent.CloseComponent();
+                        };
+                        return content;
+                    }, new DialogOptions() { ShowTitle = false, Style = "min-height:auto;min-width:auto;width:auto", CloseDialogOnEsc = false });
+                    var examQuestions = await IOGKFExamsDbService.GetExamTemplateQuestions(filter: $@"ExamTemplateId eq {examTemplate.ExamTemplateId}");
+                    foreach(var examQuestion in examQuestions.Value.ToList())
+                    {
+                        var examAnswers = await IOGKFExamsDbService.GetExamTemplateAnswers(filter: $@"ExamTemplateQuestionsId eq {examQuestion.ExamTemplateQuestionsId}");
+                        foreach(var examAnswer in examAnswers.Value.ToList())
+                        {
+                            var deleteAnswerResult = await IOGKFExamsDbService.DeleteExamTemplateAnswer(examAnswer.ExamTemplateAnswerId);
+                        }
+                        var deleteQuestionResult = await IOGKFExamsDbService.DeleteExamTemplateQuestion(examQuestion.ExamTemplateQuestionsId);
+                    }
+                    var deleteResult = await IOGKFExamsDbService.DeleteExamTemplate(examTemplateId: examTemplate.ExamTemplateId);
+                    DialogService.Close();
                     if (deleteResult != null)
                     {
                         await grid0.Reload();
@@ -100,11 +132,57 @@ namespace IOGKFExams.Client.Pages
             }
             catch (Exception ex)
             {
+                DialogService.Close();
                 NotificationService.Notify(new NotificationMessage
                 {
                     Severity = NotificationSeverity.Error,
                     Summary = $"Error",
                     Detail = $"Unable to delete ExamTemplate"
+                });
+            }
+        }
+        protected async Task GridCopyButtonClick(MouseEventArgs args, IOGKFExams.Server.Models.IOGKFExamsDb.ExamTemplate examTemplate)
+        {
+            try
+            {
+                if (await DialogService.Confirm("Are you sure you want to duplicate this record?") == true)
+                {
+                    DialogService.OpenAsync("", ds =>
+                    {
+                        RenderFragment content = dialogContent =>
+                        {
+                            dialogContent.OpenComponent<RadzenRow>(0);
+                            dialogContent.AddComponentParameter(1, nameof(RadzenRow.ChildContent), (RenderFragment)(rowContent =>
+                            {
+                                rowContent.OpenComponent<RadzenColumn>(0);
+                                rowContent.AddComponentParameter(1, nameof(RadzenColumn.Size), 12);
+                                rowContent.AddComponentParameter(2, nameof(RadzenRow.ChildContent), (RenderFragment)(columnContent =>
+                                {
+                                    columnContent.AddContent(0, "Duplicating Template.  This will take a moment.  Please wait...");
+                                }));
+                                rowContent.CloseComponent();
+                            }));
+
+                            dialogContent.CloseComponent();
+                        };
+                        return content;
+                    }, new DialogOptions() { ShowTitle = false, Style = "min-height:auto;min-width:auto;width:auto", CloseDialogOnEsc = false });
+                    var copyResult = await BatchFunctionsService.DuplicateExamTemplate(templateId:examTemplate.ExamTemplateId);
+                    DialogService.Close();
+                    if (copyResult != null)
+                    {
+                        await grid0.Reload();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                DialogService.Close();
+                NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = $"Error",
+                    Detail = $"Unable to duplicate ExamTemplate"
                 });
             }
         }
@@ -146,6 +224,16 @@ namespace IOGKFExams.Client.Pages
         }
 
         protected async System.Threading.Tasks.Task RefreshGridButtonMouseLeave(Microsoft.AspNetCore.Components.ElementReference args)
+        {
+            TooltipService.Close();
+        }
+
+        protected async System.Threading.Tasks.Task DuplicateButtonMouseEnter(Microsoft.AspNetCore.Components.ElementReference args)
+        {
+            TooltipService.Open(args, "Duplicate Exam Template", new TooltipOptions { Position = TooltipPosition.Top });
+        }
+
+        protected async System.Threading.Tasks.Task DuplicateButtonMouseLeave(Microsoft.AspNetCore.Components.ElementReference args)
         {
             TooltipService.Close();
         }
