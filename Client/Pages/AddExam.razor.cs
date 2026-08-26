@@ -114,11 +114,50 @@ namespace IOGKFExams.Client.Pages
             {
                 if (sendExam)
                 {
+                    DialogService.OpenAsync("", ds =>
+                    {
+                        RenderFragment content = dialogContent =>
+                        {
+                            dialogContent.OpenComponent<RadzenRow>(0);
+                            dialogContent.AddComponentParameter(1, nameof(RadzenRow.ChildContent), (RenderFragment)(rowContent =>
+                            {
+                                rowContent.OpenComponent<RadzenColumn>(0);
+                                rowContent.AddComponentParameter(1, nameof(RadzenColumn.Size), 12);
+                                rowContent.AddComponentParameter(2, nameof(RadzenRow.ChildContent), (RenderFragment)(columnContent =>
+                                {
+                                    columnContent.AddContent(0, "Creating Exam and Sending to Student.  This will take a moment.  Please wait...");
+                                }));
+                                rowContent.CloseComponent();
+                            }));
 
+                            dialogContent.CloseComponent();
+                        };
+                        return content;
+                    }, new DialogOptions() { ShowTitle = false, Style = "min-height:auto;min-width:auto;width:auto", CloseDialogOnEsc = false });
                 }
                 else
                 {
                     creatingExam = true;
+                    DialogService.OpenAsync("", ds =>
+                    {
+                        RenderFragment content = dialogContent =>
+                        {
+                            dialogContent.OpenComponent<RadzenRow>(0);
+                            dialogContent.AddComponentParameter(1, nameof(RadzenRow.ChildContent), (RenderFragment)(rowContent =>
+                            {
+                                rowContent.OpenComponent<RadzenColumn>(0);
+                                rowContent.AddComponentParameter(1, nameof(RadzenColumn.Size), 12);
+                                rowContent.AddComponentParameter(2, nameof(RadzenRow.ChildContent), (RenderFragment)(columnContent =>
+                                {
+                                    columnContent.AddContent(0, "Creating Exam.  This will take a moment.  Please wait...");
+                                }));
+                                rowContent.CloseComponent();
+                            }));
+
+                            dialogContent.CloseComponent();
+                        };
+                        return content;
+                    }, new DialogOptions() { ShowTitle = false, Style = "min-height:auto;min-width:auto;width:auto", CloseDialogOnEsc = false });
                 }
                 StateHasChanged();
                 exam.CreatedDate = DateTimeOffset.UtcNow;
@@ -167,12 +206,14 @@ namespace IOGKFExams.Client.Pages
                     }
                     creatingExam = false;
                     sendExam = false;
+                    DialogService.Close();
                     
                     DialogService.Close(exam);
 
                 }
                 else
                 {
+                    DialogService.Close();
                     creatingExam = false;
                     sendExam = false;
                     errorVisible = true;
@@ -180,10 +221,10 @@ namespace IOGKFExams.Client.Pages
             }
             catch (Exception ex)
             {
+                DialogService.Close();
                 errorVisible = true;
                 creatingExam = false;
                 sendExam = false;
-
             }
         }
 
